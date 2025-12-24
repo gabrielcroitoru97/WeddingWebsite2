@@ -22,7 +22,6 @@ const Header = () => {
   // Strict order and labeling as requested
   const navLinks = [
     { path: '/details', label: 'Wedding Details' },
-    { path: '/schedule', label: 'Schedule of Events' },
     { path: '/rsvp', label: 'RSVP' },
     { path: '/travel', label: 'Travel Suggestions' },
     { path: '/hinge', label: 'Hinge Profiles' },
