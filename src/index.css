@@ -1,0 +1,75 @@
+@import url('https://fonts.googleapis.com/css2?family=Righteous&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --retro-pink: #ff00ff;
+  --retro-cyan: #00ffff;
+  --retro-yellow: #ffff00;
+  --retro-purple: #9d00ff;
+  --retro-black: #000000;
+}
+
+body {
+  @apply bg-[#FFFDF5] text-black;
+  font-family: 'Space Mono', monospace;
+  background-image: 
+    radial-gradient(circle at 25px 25px, #e5e7eb 2%, transparent 0%), 
+    radial-gradient(circle at 75px 75px, #e5e7eb 2%, transparent 0%);
+  background-size: 100px 100px;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Righteous', cursive;
+}
+
+.retro-shadow {
+  box-shadow: 5px 5px 0px 0px #000000;
+}
+
+.retro-shadow-hover:hover {
+  box-shadow: 7px 7px 0px 0px #000000;
+  transform: translate(-2px, -2px);
+}
+
+.retro-shadow-sm {
+  box-shadow: 3px 3px 0px 0px #000000;
+}
+
+.retro-border {
+  @apply border-2 border-black;
+}
+
+.retro-gradient-text {
+  @apply bg-gradient-to-r from-[#ff00ff] via-[#9d00ff] to-[#00ffff] bg-clip-text text-transparent;
+}
+
+.retro-card {
+  @apply bg-white border-4 border-black retro-shadow;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 12px;
+}
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-left: 2px solid black;
+}
+::-webkit-scrollbar-thumb {
+  background: #ff00ff;
+  border: 2px solid black;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #d100d1;
+}
+
+@layer utilities {
+  .text-outline {
+    -webkit-text-stroke: 1px black;
+    color: white;
+    text-shadow: 3px 3px 0px #000;
+  }
+}
