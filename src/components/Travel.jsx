@@ -50,12 +50,10 @@ const Travel = () => {
             </div>
             <h3 className="text-2xl font-bold text-gray-800 mb-4">Where to Stay</h3>
             <div className="space-y-3 text-gray-700">
-              <p><strong>Hotel Block:</strong> Casa San Agustín</p>
-              <p><strong>Booking Code:</strong> GABOMARCO2026</p>
-              <p><strong>Special Rate:</strong> Available until March 15, 2026</p>
-              <p className="text-sm text-gray-600 mt-4">
-                Other nearby boutique hotels: Sofitel Legend Santa Clara, Hotel Charleston, Casa Pombo. All within walking distance of the venue.
-              </p>
+              <p><strong>Hotel Block:</strong> Hilton Hotel</p>
+              <p><strong>Booking Code:</strong> TBD</p>
+              <p><strong>Special Rate:</strong> Available until TBD, 2026</p>
+              
             </div>
           </motion.div>
         </div>
@@ -73,12 +71,14 @@ const Travel = () => {
             </div>
             <h3 className="text-2xl font-bold text-gray-800 mb-4">Things to Do</h3>
             <ul className="space-y-2 text-gray-700">
+              <li>• Go to a wedding</li>
               <li>• Walk the historic city walls at sunset</li>
               <li>• Visit Castillo San Felipe de Barajas</li>
-              <li>• Explore the colorful Getsemaní neighborhood</li>
+              <li>• Go to a pool party</li>
               <li>• Relax on the Rosario Islands</li>
-              <li>• Enjoy street food and local cuisine</li>
+              <li>• Attend a shabbat dinner</li>
               <li>• Take a sunset cruise on the bay</li>
+              <li>• Give generously to a Colombian mans wedding registry</li>
             </ul>
           </motion.div>
 
@@ -98,7 +98,7 @@ const Travel = () => {
               <li>• <strong>Currency:</strong> Colombian Peso (USD widely accepted)</li>
               <li>• <strong>Language:</strong> Spanish (English in tourist areas)</li>
               <li>• <strong>Dress:</strong> Light, breathable fabrics recommended</li>
-              <li>• <strong>Safety:</strong> Stick to tourist areas, use registered taxis</li>
+              <li>• <strong>Safety:</strong> Stick to tourist areas, use Ubers, don't hail a taxi from the street</li>
               <li>• <strong>Best time to arrive:</strong> Thursday or Friday before</li>
             </ul>
           </motion.div>

@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Trophy, Music, Heart, BookOpen } from 'lucide-react';
+import { Trophy, Music, BookOpen, Smile, Baby } from 'lucide-react';
 
 export const AthleticPage = () => (
   <section className="py-24 bg-white min-h-screen">
@@ -15,111 +15,184 @@ export const AthleticPage = () => (
           Athletic Accomplishments
         </h2>
       </motion.div>
-      <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
-        <div className="bg-gradient-to-br from-yellow-50 to-orange-50 rounded-2xl p-8 shadow-lg">
-          <h3 className="text-2xl font-bold text-gray-800 mb-4">Gabriel's Achievements</h3>
-          <ul className="space-y-3 text-gray-700">
-            <li>🏃‍♂️ Completed 5 marathons (best time: 3:42:15)</li>
-            <li>🏊‍♂️ Ironman 70.3 finisher (2022, 2023)</li>
-            <li>🚴‍♂️ Century rider - 100+ miles</li>
-            <li>🏅 Boston Marathon qualifier</li>
-            <li>⚽ College varsity soccer (4 years)</li>
-          </ul>
+      <motion.div 
+        initial={{ opacity: 0, scale: 0.9 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ delay: 0.2 }}
+        className="max-w-3xl mx-auto bg-white border-4 border-black p-8 md:p-12 shadow-[12px_12px_0_0_rgba(0,0,0,1)]"
+      >
+        <p className="text-2xl md:text-3xl font-black text-center mb-12 font-mono uppercase leading-relaxed">
+          Since starting to date in August of 2023, Gabe and Sasha have completed a combined:
+        </p>
+        
+        <ul className="space-y-6 text-xl md:text-2xl font-bold text-black">
+          <li className="flex items-center gap-4 p-4 bg-yellow-100 border-2 border-black shadow-[4px_4px_0_0_rgba(0,0,0,1)] transform -rotate-1 hover:rotate-0 transition-transform">
+            <span className="text-3xl">🏊‍♂️</span>
+            2 Half Iron Mans
+          </li>
+          <li className="flex items-center gap-4 p-4 bg-pink-100 border-2 border-black shadow-[4px_4px_0_0_rgba(0,0,0,1)] transform rotate-1 hover:rotate-0 transition-transform">
+            <span className="text-3xl">🏃‍♂️</span>
+            3 Marathons
+          </li>
+          <li className="flex items-center gap-4 p-4 bg-cyan-100 border-2 border-black shadow-[4px_4px_0_0_rgba(0,0,0,1)] transform -rotate-1 hover:rotate-0 transition-transform">
+            <span className="text-3xl">👟</span>
+            1 Half Marathon
+          </li>
+          <li className="flex items-center gap-4 p-4 bg-purple-100 border-2 border-black shadow-[4px_4px_0_0_rgba(0,0,0,1)] transform rotate-1 hover:rotate-0 transition-transform">
+            <span className="text-3xl">🦃</span>
+            3 Turkey Trots
+          </li>
+        </ul>
+
+        <div className="grid md:grid-cols-2 gap-8 mt-12">
+          <div className="space-y-4">
+            <div className="border-4 border-black shadow-[8px_8px_0_0_rgba(0,0,0,1)] rotate-1 hover:rotate-0 transition-transform overflow-hidden bg-white">
+              <img 
+                src="/images/Ironman.jpg" 
+                alt="2024 Wisconsin Half Ironman"
+                className="w-full h-full object-cover aspect-[4/3]"
+              />
+            </div>
+            <p className="text-center font-bold font-mono text-lg">2024 Wisconsin Half Ironman</p>
+          </div>
+          <div className="space-y-4">
+            <div className="border-4 border-black shadow-[8px_8px_0_0_rgba(0,0,0,1)] -rotate-1 hover:rotate-0 transition-transform overflow-hidden bg-white">
+              <img 
+                src="/images/turkey_trot.jpg" 
+                alt="2025 Highland Park Turkey Trot"
+                className="w-full h-full object-cover aspect-[4/3] object-[50%_5%]"
+              />
+            </div>
+            <p className="text-center font-bold font-mono text-lg">2025 Highland Park Turkey Trot</p>
+          </div>
         </div>
-        <div className="bg-gradient-to-br from-blue-50 to-teal-50 rounded-2xl p-8 shadow-lg">
-          <h3 className="text-2xl font-bold text-gray-800 mb-4">Sasha's Achievements</h3>
-          <ul className="space-y-3 text-gray-700">
-            <li>🎾 Former college tennis player</li>
-            <li>🏃‍♂️ Half marathon finisher (multiple)</li>
-            <li>🧘‍♂️ Certified yoga instructor</li>
-            <li>🏊‍♂️ Open water swimmer</li>
-            <li>⛰️ Hiked the Inca Trail to Machu Picchu</li>
-          </ul>
+      </motion.div>
+    </div>
+  </section>
+);
+
+export const FutureKidsPage = () => (
+  <section className="py-24 bg-white min-h-screen">
+    <div className="container mx-auto px-4">
+      <motion.div 
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="flex flex-col items-center gap-6 mb-12 text-center"
+      >
+        <div className="flex items-center gap-3">
+          <Baby className="w-10 h-10 text-pink-500" />
+          <h2 className="text-4xl font-bold bg-gradient-to-r from-pink-500 to-blue-500 bg-clip-text text-transparent">
+            See Our Future Kids
+          </h2>
+        </div>
+        <p className="text-2xl font-bold font-mono">
+          This is what AI says our future kids will look like!
+        </p>
+      </motion.div>
+
+      <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+        <motion.div
+          initial={{ opacity: 0, x: -50 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          viewport={{ once: true }}
+          className="space-y-4"
+        >
+          <div className="border-4 border-black shadow-[8px_8px_0_0_rgba(0,0,0,1)] rotate-1 hover:rotate-0 transition-transform overflow-hidden bg-white">
+            <img 
+              src="/images/Future Boy.png" 
+              alt="Future Boy"
+              className="w-full h-full object-cover aspect-[3/4]"
+            />
+          </div>
+          <p className="text-center font-bold font-mono text-lg">Gabriel Jr.</p>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, x: 50 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          viewport={{ once: true }}
+          className="space-y-4"
+        >
+          <div className="border-4 border-black shadow-[8px_8px_0_0_rgba(0,0,0,1)] -rotate-1 hover:rotate-0 transition-transform overflow-hidden bg-white">
+            <img 
+              src="/images/Future Girl.png" 
+              alt="Future Girl"
+              className="w-full h-full object-cover aspect-[3/4]"
+            />
+          </div>
+          <p className="text-center font-bold font-mono text-lg">Sasha Jr.</p>
+        </motion.div>
+      </div>
+    </div>
+  </section>
+);
+
+export const JokePage = () => (
+  <section className="py-24 bg-white min-h-screen">
+    <div className="container mx-auto px-4">
+      <div className="grid md:grid-cols-2 gap-4 max-w-3xl mx-auto">
+        <div className="rounded-2xl overflow-hidden shadow-[8px_8px_0_0_rgba(0,0,0,1)] border-4 border-black">
+          <img 
+            src="/images/Fish Joke1.jpeg" 
+            alt="Fish Joke Part 1"
+            className="w-full h-auto"
+          />
+        </div>
+        <div className="rounded-2xl overflow-hidden shadow-[8px_8px_0_0_rgba(0,0,0,1)] border-4 border-black">
+          <img 
+            src="/images/Fish Joke2.jpeg" 
+            alt="Fish Joke Part 2"
+            className="w-full h-auto"
+          />
         </div>
       </div>
     </div>
   </section>
 );
 
-export const TrumpetPage = () => (
-  <section className="py-24 bg-white min-h-screen">
-    <div className="container mx-auto px-4">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="flex items-center gap-3 mb-8 justify-center"
-      >
-        <Music className="w-10 h-10 text-purple-500" />
-        <h2 className="text-4xl font-bold bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent">
-          Gabriel's Musical Journey
-        </h2>
-      </motion.div>
-      <div className="grid md:grid-cols-2 gap-8 items-center max-w-5xl mx-auto">
-        <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl p-8 shadow-lg">
-          <p className="text-gray-700 leading-relaxed mb-4">
-            Gabriel has been playing trumpet since age 10, inspired by his grandfather who was a jazz musician. 
-            He's performed in various jazz ensembles, wedding bands, and even busked in Central Park during college.
-          </p>
-          <p className="text-gray-700 leading-relaxed mb-4">
-            Currently, he plays with the West Village Jazz Collective every Thursday night. His favorite artists 
-            include Miles Davis, Dizzy Gillespie, and Wynton Marsalis.
-          </p>
-          <p className="text-gray-700 leading-relaxed">
-            Fun fact: Gabriel proposed to Sasha with a custom arrangement of "What a Wonderful World" played at 
-            sunset in Central Park!
-          </p>
-        </div>
-        <div className="rounded-2xl overflow-hidden shadow-lg">
-          <img 
-            alt="Gabriel playing trumpet on stage"
-            className="w-full h-full object-cover aspect-[4/3]"
-           src="https://images.unsplash.com/photo-1560826699-857911f94613" />
-        </div>
-      </div>
-    </div>
-  </section>
-);
+export const MarcoPage = () => {
+  const [position, setPosition] = React.useState(null);
 
-export const SashaPage = () => (
-  <section className="py-24 bg-white min-h-screen">
-    <div className="container mx-auto px-4">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="flex items-center gap-3 mb-8 justify-center"
+  const movePolo = () => {
+    const top = Math.random() * 80 + 10;
+    const left = Math.random() * 80 + 10;
+    
+    // Calculate angle from center to ensure button points inwards
+    // This prevents the button from going off-screen when the text is near the edge
+    const angleFromCenter = Math.atan2(top - 50, left - 50);
+    const angle = angleFromCenter + Math.PI + (Math.random() * (Math.PI / 1.5) - Math.PI / 3);
+    
+    const distance = 100 + Math.random() * 100; // 100px to 200px radius
+    const btnX = Math.cos(angle) * distance;
+    const btnY = Math.sin(angle) * distance;
+    
+    setPosition({ top: `${top}%`, left: `${left}%`, btnX, btnY });
+  };
+
+  return (
+    <div className="min-h-screen bg-white flex items-center justify-center relative overflow-hidden">
+      <div 
+        className={`flex flex-col items-center gap-4 ${position ? 'absolute' : ''}`}
+        style={position ? { top: position.top, left: position.left, transform: 'translate(-50%, -50%)' } : {}}
       >
-        <Heart className="w-10 h-10 text-pink-500" />
-        <h2 className="text-4xl font-bold bg-gradient-to-r from-pink-500 to-red-500 bg-clip-text text-transparent">
-          All About Sasha
-        </h2>
-      </motion.div>
-      <div className="grid md:grid-cols-2 gap-8 items-center max-w-5xl mx-auto">
-        <div className="rounded-2xl overflow-hidden shadow-lg order-2 md:order-1">
-          <img 
-            alt="Sasha portrait in natural setting"
-            className="w-full h-full object-cover aspect-[4/3]"
-           src="https://images.unsplash.com/photo-1693188584849-fe9068faee2e" />
-        </div>
-        <div className="bg-gradient-to-br from-pink-50 to-red-50 rounded-2xl p-8 shadow-lg order-1 md:order-2">
-          <p className="text-gray-700 leading-relaxed mb-4">
-            Sasha grew up in Cartagena (yes, that's why we're getting married there!) and moved to New York 
-            for design school. He's a senior graphic designer at a leading creative agency, specializing in 
-            brand identity and digital experiences.
-          </p>
-          <p className="text-gray-700 leading-relaxed mb-4">
-            When he's not designing, Sasha loves exploring the city's art galleries, trying new restaurants, 
-            and planning the couple's next travel adventure. He speaks three languages fluently: Spanish, 
-            English, and Portuguese.
-          </p>
-          <p className="text-gray-700 leading-relaxed">
-            Sasha is the organized one in the relationship (this whole wedding wouldn't happen without him!) 
-            and makes the world's best arepas, according to Gabriel.
-          </p>
-        </div>
+        <p className="text-2xl font-medium text-black">Polo</p>
+        <button 
+          onClick={movePolo} 
+          className="px-8 py-3 bg-black text-white font-bold font-mono uppercase tracking-widest border-4 border-transparent hover:bg-white hover:text-black hover:border-black shadow-[4px_4px_0_0_rgba(0,0,0,1)] hover:shadow-[6px_6px_0_0_rgba(0,0,0,1)] transition-colors transition-shadow active:translate-x-[2px] active:translate-y-[2px] active:shadow-[2px_2px_0_0_rgba(0,0,0,1)]"
+          style={position ? { 
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: `translate(calc(-50% + ${position.btnX}px), calc(-50% + ${position.btnY}px))`,
+            width: 'max-content'
+          } : {}}
+        >
+          Marco
+        </button>
       </div>
     </div>
-  </section>
-);
+  );
+};
 
 export const CartagenaPage = () => (
   <section className="py-24 bg-white min-h-screen">

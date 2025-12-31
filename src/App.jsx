@@ -11,7 +11,7 @@ import Travel from '@/components/Travel';
 import HingeProfiles from '@/components/HingeProfiles';
 import SingleGuests from '@/components/SingleGuests';
 import FAQ from '@/components/FAQ';
-import { AthleticPage, TrumpetPage, SashaPage, CartagenaPage } from '@/components/MorePages';
+import { AthleticPage, JokePage, MarcoPage, CartagenaPage, FutureKidsPage } from '@/components/MorePages';
 import { Toaster } from '@/components/ui/toaster';
 
 function App() {
@@ -35,9 +35,10 @@ function App() {
             <Route path="/single-guests" element={<SingleGuests />} />
             <Route path="/faq" element={<FAQ />} />
             <Route path="/more/athletic" element={<AthleticPage />} />
-            <Route path="/more/trumpet" element={<TrumpetPage />} />
-            <Route path="/more/sasha" element={<SashaPage />} />
+            <Route path="/more/joke" element={<JokePage />} />
+            <Route path="/more/marco" element={<MarcoPage />} />
             <Route path="/more/cartagena" element={<CartagenaPage />} />
+            <Route path="/more/future-kids" element={<FutureKidsPage />} />
           </Routes>
         </main>
         <Toaster />

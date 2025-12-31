@@ -15,9 +15,9 @@ const Hero = () => {
       />
       
       {/* Decorative Shapes */}
-      <div className="absolute top-20 left-10 w-32 h-32 bg-pink-500 border-4 border-black rounded-full z-0 animate-bounce" style={{ animationDuration: '3s' }} />
-      <div className="absolute bottom-20 right-10 w-0 h-0 border-l-[50px] border-l-transparent border-b-[100px] border-b-cyan-400 border-r-[50px] border-r-transparent rotate-12 z-0" />
-      <div className="absolute top-40 right-20 w-24 h-24 bg-purple-500 border-4 border-black rotate-45 z-0" />
+      <div className="absolute top-20 left-10 w-32 h-32 bg-blue-600 border-4 border-black rounded-full z-0 animate-bounce" style={{ animationDuration: '3s' }} />
+      <div className="absolute bottom-20 right-10 w-0 h-0 border-l-[50px] border-l-transparent border-b-[100px] border-b-red-600 border-r-[50px] border-r-transparent rotate-12 z-0" />
+      <div className="absolute top-40 right-20 w-24 h-24 bg-red-600 border-4 border-black rotate-45 z-0" />
 
       <div className="container mx-auto px-4 py-16 relative z-10">
         <motion.div
@@ -58,12 +58,12 @@ const Hero = () => {
             >
               <div className="relative overflow-hidden border-2 border-black bg-gray-200 aspect-[3/4]">
                 <img 
-                  alt="Gabriel smiling at camera"
+                  alt="Gabriel and Sasha"
                   className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-300"
-                 src="https://images.unsplash.com/photo-1615847879584-4b9f0b72fd2e" />
+                 src="/images/CouplePic1.JPG" />
               </div>
               <div className="mt-4">
-                <h3 className="text-black text-3xl font-bold font-mono">GABRIEL</h3>
+                <h3 className="text-black text-3xl font-bold font-mono">Indoor Skydivers</h3>
                 <div className="flex justify-center gap-2 mt-2">
                    <Star className="w-5 h-5 text-yellow-400 fill-yellow-400" />
                    <Star className="w-5 h-5 text-yellow-400 fill-yellow-400" />
@@ -83,12 +83,12 @@ const Hero = () => {
             >
               <div className="relative overflow-hidden border-2 border-black bg-gray-200 aspect-[3/4]">
                 <img 
-                  alt="Sasha smiling at camera"
+                  alt="Sasha and Gabriel"
                   className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-300"
-                 src="https://images.unsplash.com/photo-1527707471127-c3ad5ea438d2" />
+                 src="/images/CouplePic2.JPG" />
               </div>
               <div className="mt-4">
-                <h3 className="text-black text-3xl font-bold font-mono">SASHA</h3>
+                <h3 className="text-black text-3xl font-bold font-mono">Ice Cream Enthusiasts</h3>
                 <div className="flex justify-center gap-2 mt-2">
                    <Zap className="w-5 h-5 text-blue-500 fill-blue-500" />
                    <Zap className="w-5 h-5 text-blue-500 fill-blue-500" />
@@ -107,7 +107,7 @@ const Hero = () => {
             className="inline-flex flex-col items-center bg-white border-4 border-black p-8 shadow-[8px_8px_0_0_#00ffff]"
           >
             <p className="text-3xl md:text-4xl text-black font-black mb-2 uppercase">
-              June 15, 2026
+              January 15-17, 2027
             </p>
             <div className="w-full h-1 bg-black mb-2" />
             <p className="text-xl md:text-2xl text-purple-600 font-bold font-mono">
