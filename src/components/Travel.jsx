@@ -78,7 +78,7 @@ const Travel = () => {
               <li>• Relax on the Rosario Islands</li>
               <li>• Attend a shabbat dinner</li>
               <li>• Take a sunset cruise on the bay</li>
-              <li>• Give generously to a Colombian mans wedding registry</li>
+              <li>• Give generously to a Colombian man's wedding registry</li>
             </ul>
           </motion.div>
 

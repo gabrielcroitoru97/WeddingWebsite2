@@ -1,8 +1,22 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Heart, ArrowRight } from 'lucide-react';
+import { Heart, ArrowRight, Lock } from 'lucide-react';
 
 const SingleGuests = () => {
+  const [password, setPassword] = useState('');
+  const [isUnlocked, setIsUnlocked] = useState(false);
+  const [error, setError] = useState(false);
+
+  const handleUnlock = (e) => {
+    e.preventDefault();
+    if (password.toLowerCase() === 'solteros') {
+      setIsUnlocked(true);
+      setError(false);
+    } else {
+      setError(true);
+    }
+  };
+
   return (
     <section className="py-24 bg-purple-600 min-h-screen relative overflow-hidden">
        {/* Background Grid */}
@@ -56,16 +70,16 @@ const SingleGuests = () => {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             whileHover={{ scale: 1.02, rotate: -1 }}
-            className="block bg-blue-400 border-4 border-black p-8 shadow-[8px_8px_0_0_#000] hover:shadow-[12px_12px_0_0_#000] transition-all cursor-pointer group"
+            className="flex flex-col justify-center h-full bg-green-400 border-4 border-black p-8 shadow-[8px_8px_0_0_#000] hover:shadow-[12px_12px_0_0_#000] transition-all cursor-pointer group"
           >
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-3xl font-black text-black uppercase">Men's Deck</h3>
+            <div className="flex items-center justify-center gap-4">
+              <h3 className="text-3xl font-black text-black uppercase">Sample Slides</h3>
               <ArrowRight className="w-8 h-8 text-black group-hover:translate-x-2 transition-transform" />
             </div>
-            <p className="font-mono font-bold text-black">View the bachelors &rarr;</p>
           </motion.a>
 
-          <motion.a
+          {isUnlocked ? (
+            <motion.a
             href="https://docs.google.com/presentation/d/1XQ4gut19WtFZTfFUqNR3tNLxcwjPnDGMSEi6qSxX2k4/edit?usp=sharing"
             target="_blank"
             rel="noopener noreferrer"
@@ -73,14 +87,48 @@ const SingleGuests = () => {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             whileHover={{ scale: 1.02, rotate: 1 }}
-            className="block bg-pink-400 border-4 border-black p-8 shadow-[8px_8px_0_0_#000] hover:shadow-[12px_12px_0_0_#000] transition-all cursor-pointer group"
+            className="block bg-orange-400 border-4 border-black p-8 shadow-[8px_8px_0_0_#000] hover:shadow-[12px_12px_0_0_#000] transition-all cursor-pointer group"
           >
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-3xl font-black text-black uppercase">Women's Deck</h3>
+              <h3 className="text-3xl font-black text-black uppercase">Singles Deck</h3>
               <ArrowRight className="w-8 h-8 text-black group-hover:translate-x-2 transition-transform" />
             </div>
-            <p className="font-mono font-bold text-black">View the bachelorettes &rarr;</p>
+            <p className="font-mono font-bold text-black">View the bachelors and bachelorettes</p>
           </motion.a>
+          ) : (
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              className="block bg-orange-400 border-4 border-black p-8 shadow-[8px_8px_0_0_#000] transition-all"
+            >
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-3xl font-black text-black uppercase">Singles Deck</h3>
+                <Lock className="w-8 h-8 text-black" />
+              </div>
+              <form onSubmit={handleUnlock} className="space-y-4">
+                <div className="space-y-2">
+                  <p className="font-mono font-bold text-black text-sm">Enter password to view:</p>
+                  <div className="flex gap-2">
+                    <input
+                      type="password"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      className="w-full p-2 border-2 border-black font-mono text-sm focus:outline-none focus:ring-2 focus:ring-black/20 bg-white"
+                      placeholder="Password"
+                    />
+                    <button
+                      type="submit"
+                      className="bg-black text-white px-4 py-2 font-bold font-mono border-2 border-transparent hover:bg-gray-800 transition-colors"
+                    >
+                      GO
+                    </button>
+                  </div>
+                  {error && <p className="text-red-700 font-bold font-mono text-sm">Incorrect password!</p>}
+                </div>
+              </form>
+            </motion.div>
+          )}
         </div>
       </div>
     </section>
