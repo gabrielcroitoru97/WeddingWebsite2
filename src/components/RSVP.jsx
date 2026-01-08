@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Search, Users, Check } from 'lucide-react';
+import { Search, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -17,18 +17,16 @@ const RSVP = () => {
   const [formData, setFormData] = useState({
     guestName: '',
     email: '',
-    attending: null,
-    numberOfGuests: 1,
+    attendingTour: false,
+    attendingShabbat: false,
+    attendingPoolParty: false,
+    attendingWedding: false,
     dietaryRestrictions: '',
     additionalNotes: ''
   });
   const [loading, setLoading] = useState(false);
   
   const handleSearch = async () => {
-    // Debugging: This will show us exactly what key the app is trying to use
-    console.log("DEBUG - Supabase URL:", import.meta.env.VITE_SUPABASE_URL);
-    console.log("DEBUG - Supabase Key:", import.meta.env.VITE_SUPABASE_ANON_KEY);
-
     if (searchName.trim()) {
       setLoading(true);
       setSearchResults([]);
@@ -68,25 +66,47 @@ const RSVP = () => {
     }
   };
 
-  const handleSelectGuest = (guest) => {
-    setFormData({
-      ...formData,
-      guestName: guest.name
-    });
-    setShowForm(true);
-    setSearchResults([]);
+  const handleSelectGuest = async (guest) => {
+    setLoading(true);
+    try {
+      const { data, error } = await supabase
+        .from('rsvps')
+        .select('id')
+        .eq('guest_name', guest.name);
+
+      if (error) throw error;
+
+      console.log('Checking existing RSVPs:', data);
+
+      if (data && data.length > 0) {
+        toast({
+          variant: "destructive",
+          title: "Already Submitted",
+          description: "An RSVP has already been submitted for this guest."
+        });
+        return;
+      }
+
+      setFormData({
+        ...formData,
+        guestName: guest.name
+      });
+      setShowForm(true);
+      setSearchResults([]);
+    } catch (error) {
+      console.error('Check RSVP error:', error);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Failed to verify RSVP status. Please try again."
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleSubmit = async e => {
     e.preventDefault();
-    if (formData.attending === null) {
-      toast({
-        variant: "destructive",
-        title: "Please select an option",
-        description: "Let us know if you'll be attending"
-      });
-      return;
-    }
     setLoading(true);
     try {
       const {
@@ -94,15 +114,17 @@ const RSVP = () => {
       } = await supabase.from('rsvps').insert([{
         guest_name: formData.guestName,
         email: formData.email,
-        attending: formData.attending,
-        number_of_guests: formData.numberOfGuests,
+        attending_tour: formData.attendingTour,
+        attending_shabbat: formData.attendingShabbat,
+        attending_pool_party: formData.attendingPoolParty,
+        attending_wedding: formData.attendingWedding,
         dietary_restrictions: formData.dietaryRestrictions,
         additional_notes: formData.additionalNotes
       }]);
       if (error) throw error;
       toast({
         title: "RSVP Submitted! 🎉",
-        description: formData.attending ? "We can't wait to celebrate with you!" : "Thank you for letting us know. You'll be missed!"
+        description: formData.attendingWedding ? "We can't wait to celebrate with you!" : "Thank you for letting us know."
       });
 
       // Reset form
@@ -111,17 +133,27 @@ const RSVP = () => {
       setFormData({
         guestName: '',
         email: '',
-        attending: null,
-        numberOfGuests: 1,
+        attendingTour: false,
+        attendingShabbat: false,
+        attendingPoolParty: false,
+        attendingWedding: false,
         dietaryRestrictions: '',
         additionalNotes: ''
       });
     } catch (error) {
-      toast({
-        variant: "destructive",
-        title: "Error submitting RSVP",
-        description: error.message || "Please try again later"
-      });
+      if (error.code === '23505') {
+        toast({
+          variant: "destructive",
+          title: "Already Submitted",
+          description: "An RSVP has already been submitted for this guest."
+        });
+      } else {
+        toast({
+          variant: "destructive",
+          title: "Error submitting RSVP",
+          description: error.message || "Please try again later"
+        });
+      }
     } finally {
       setLoading(false);
     }
@@ -188,7 +220,8 @@ const RSVP = () => {
                     <button
                       key={guest.id || guest.name}
                       onClick={() => handleSelectGuest(guest)}
-                      className="w-full p-3 text-left bg-white border-2 border-black shadow-[4px_4px_0_0_rgba(0,0,0,1)] hover:bg-purple-100 hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[3px_3px_0_0_rgba(0,0,0,1)] transition-all font-mono font-bold uppercase"
+                      disabled={loading}
+                      className="w-full p-3 text-left bg-white border-2 border-black shadow-[4px_4px_0_0_rgba(0,0,0,1)] hover:bg-purple-100 hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[3px_3px_0_0_rgba(0,0,0,1)] transition-all font-mono font-bold uppercase disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       {guest.name}
                     </button>
@@ -221,36 +254,33 @@ const RSVP = () => {
                 </div>
 
                 <div>
-                  <Label className="mb-3 block font-bold font-mono text-black uppercase">Will you be attending?</Label>
-                  <div className="grid grid-cols-2 gap-4">
-                    <Button type="button" variant={formData.attending === true ? "default" : "outline"} onClick={() => setFormData({
-                  ...formData,
-                  attending: true
-                })} className={`border-2 border-black rounded-none font-bold font-mono ${formData.attending === true ? "bg-green-400 text-black shadow-[4px_4px_0_0_rgba(0,0,0,1)]" : "bg-white text-black hover:bg-gray-100"}`}>
-                      <Check className="mr-2 h-4 w-4" />
-                      Yes, I'll be there!
-                    </Button>
-                    <Button type="button" variant={formData.attending === false ? "default" : "outline"} onClick={() => setFormData({
-                  ...formData,
-                  attending: false
-                })} className={`border-2 border-black rounded-none font-bold font-mono ${formData.attending === false ? "bg-red-400 text-black shadow-[4px_4px_0_0_rgba(0,0,0,1)]" : "bg-white text-black hover:bg-gray-100"}`}>
-                      Sorry, can't make it
-                    </Button>
+                  <Label className="mb-3 block font-bold font-mono text-black uppercase">Which events will you be attending?</Label>
+                  <div className="space-y-3">
+                    {[
+                      { id: 'attendingTour', label: 'Old City Tour', date: 'Friday, Jan 15 @ 9:00 AM' },
+                      { id: 'attendingShabbat', label: 'Shabbat Dinner', date: 'Friday, Jan 15 @ 7:00 PM' },
+                      { id: 'attendingPoolParty', label: 'Pool Party', date: 'Saturday, Jan 16 @ 1:00 PM' },
+                      { id: 'attendingWedding', label: 'The Wedding', date: 'Sunday, Jan 17 @ 6:00 PM' },
+                    ].map((event) => (
+                      <div 
+                        key={event.id}
+                        className={`flex items-center space-x-3 p-3 border-2 border-black shadow-[4px_4px_0_0_rgba(0,0,0,1)] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[2px_2px_0_0_rgba(0,0,0,1)] transition-all cursor-pointer ${formData[event.id] ? 'bg-purple-100' : 'bg-white'}`}
+                        onClick={() => setFormData({ ...formData, [event.id]: !formData[event.id] })}
+                      >
+                        <div className={`w-6 h-6 border-2 border-black flex items-center justify-center transition-colors ${formData[event.id] ? 'bg-black' : 'bg-white'}`}>
+                          {formData[event.id] && <Check className="text-white w-4 h-4" />}
+                        </div>
+                        <div>
+                          <p className="font-bold font-mono uppercase text-sm md:text-base">{event.label}</p>
+                          <p className="font-mono text-xs md:text-sm text-gray-600">{event.date}</p>
+                        </div>
+                      </div>
+                    ))}
                   </div>
                 </div>
 
-                {formData.attending === true && <>
-                    <div>
-                      <Label htmlFor="numberOfGuests">
-                        <Users className="inline mr-2 h-4 w-4 font-bold font-mono text-black uppercase" />
-                        Number of Guests
-                      </Label>
-                      <Input id="numberOfGuests" type="number" min="1" max="10" value={formData.numberOfGuests} onChange={e => setFormData({
-                  ...formData,
-                  numberOfGuests: parseInt(e.target.value)
-                })} className="border-2 border-black rounded-none font-mono" />
-                    </div>
-
+                {(formData.attendingTour || formData.attendingShabbat || formData.attendingPoolParty || formData.attendingWedding) && (
+                  <div className="animate-in fade-in slide-in-from-top-4 space-y-6">
                     <div>
                       <Label htmlFor="dietaryRestrictions" className="font-bold font-mono text-black uppercase">
                         Dietary Restrictions or Allergies
@@ -260,7 +290,8 @@ const RSVP = () => {
                   dietaryRestrictions: e.target.value
                 })} rows={3} className="border-2 border-black rounded-none font-mono" />
                     </div>
-                  </>}
+                  </div>
+                )}
 
                 <div>
                   <Label htmlFor="additionalNotes" className="font-bold font-mono text-black uppercase">Additional Notes (Optional)</Label>
