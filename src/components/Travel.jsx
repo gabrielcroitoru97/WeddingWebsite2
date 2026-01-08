@@ -32,7 +32,7 @@ const Travel = () => {
             <div className="space-y-3 text-gray-700">
               <p><strong>Airport:</strong> Rafael Núñez International Airport (CTG)</p>
               <p><strong>Direct flights from:</strong> Miami, Fort Lauderdale, New York, Panama City, and more</p>
-              <p><strong>Transfer:</strong> 15 minutes to the historic center</p>
+              <p><strong>Transfer:</strong> 20 minutes to the Hilton</p>
               <p className="text-sm text-gray-600 mt-4">
                 We recommend booking flights early for the best rates. Most US citizens need a passport valid for 6 months.
               </p>
@@ -94,8 +94,8 @@ const Travel = () => {
             </div>
             <h3 className="text-2xl font-bold text-gray-800 mb-4">Good to Know</h3>
             <ul className="space-y-2 text-gray-700">
-              <li>• <strong>Weather:</strong> Hot and humid (85-90°F)</li>
-              <li>• <strong>Currency:</strong> Colombian Peso (USD widely accepted)</li>
+              <li>• <strong>Weather:</strong> 75-85°F and humid</li>
+              <li>• <strong>Currency:</strong> Colombian Peso</li>
               <li>• <strong>Language:</strong> Spanish (English in tourist areas)</li>
               <li>• <strong>Dress:</strong> Light, breathable fabrics recommended</li>
               <li>• <strong>Safety:</strong> Stick to tourist areas, use Ubers, don't hail a taxi from the street</li>

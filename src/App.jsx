@@ -8,6 +8,7 @@ import WeddingDetails from '@/components/WeddingDetails';
 import Schedule from '@/components/Schedule';
 import RSVP from '@/components/RSVP';
 import Travel from '@/components/Travel';
+import Registry from '@/components/Registry';
 import HingeProfiles from '@/components/HingeProfiles';
 import SingleGuests from '@/components/SingleGuests';
 import FAQ from '@/components/FAQ';
@@ -31,6 +32,7 @@ function App() {
             <Route path="/schedule" element={<Schedule />} />
             <Route path="/rsvp" element={<RSVP />} />
             <Route path="/travel" element={<Travel />} />
+            <Route path="/registry" element={<Registry />} />
             <Route path="/hinge" element={<HingeProfiles />} />
             <Route path="/single-guests" element={<SingleGuests />} />
             <Route path="/faq" element={<FAQ />} />

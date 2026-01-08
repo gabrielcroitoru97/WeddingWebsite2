@@ -2,74 +2,85 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { Trophy, Music, BookOpen, Smile, Baby } from 'lucide-react';
 
-export const AthleticPage = () => (
-  <section className="py-24 bg-white min-h-screen">
-    <div className="container mx-auto px-4">
-      <motion.div 
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="flex items-center gap-3 mb-8 justify-center"
-      >
-        <Trophy className="w-10 h-10 text-yellow-500" />
-        <h2 className="text-4xl font-bold bg-gradient-to-r from-yellow-500 to-orange-500 bg-clip-text text-transparent">
-          Athletic Accomplishments
-        </h2>
-      </motion.div>
-      <motion.div 
-        initial={{ opacity: 0, scale: 0.9 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ delay: 0.2 }}
-        className="max-w-3xl mx-auto bg-white border-4 border-black p-8 md:p-12 shadow-[12px_12px_0_0_rgba(0,0,0,1)]"
-      >
-        <p className="text-2xl md:text-3xl font-black text-center mb-12 font-mono uppercase leading-relaxed">
-          Since starting to date in August of 2023, Gabe and Sasha have completed a combined:
-        </p>
-        
-        <ul className="space-y-6 text-xl md:text-2xl font-bold text-black">
-          <li className="flex items-center gap-4 p-4 bg-yellow-100 border-2 border-black shadow-[4px_4px_0_0_rgba(0,0,0,1)] transform -rotate-1 hover:rotate-0 transition-transform">
-            <span className="text-3xl">🏊‍♂️</span>
-            2 Half Iron Mans
-          </li>
-          <li className="flex items-center gap-4 p-4 bg-pink-100 border-2 border-black shadow-[4px_4px_0_0_rgba(0,0,0,1)] transform rotate-1 hover:rotate-0 transition-transform">
-            <span className="text-3xl">🏃‍♂️</span>
-            3 Marathons
-          </li>
-          <li className="flex items-center gap-4 p-4 bg-cyan-100 border-2 border-black shadow-[4px_4px_0_0_rgba(0,0,0,1)] transform -rotate-1 hover:rotate-0 transition-transform">
-            <span className="text-3xl">👟</span>
-            1 Half Marathon
-          </li>
-          <li className="flex items-center gap-4 p-4 bg-purple-100 border-2 border-black shadow-[4px_4px_0_0_rgba(0,0,0,1)] transform rotate-1 hover:rotate-0 transition-transform">
-            <span className="text-3xl">🦃</span>
-            3 Turkey Trots
-          </li>
-        </ul>
+export const AthleticPage = () => {
+  const events = [
+    { name: "2023 Chicago Half Marathon", img: "/images/Chicago Half.jpeg" },
+    { name: "2023 Chicago Marathon", img: "/images/Chicago Marathon.JPG" },
+    { name: "2024 Miami Marathon", img: "/images/Miami Marathon.jpeg" },
+    { name: "2024 Wisconsin Half Iron Man", img: "/images/Wisconsin Ironman.jpg" },
+    { name: "2024 Highland Park Turkey Trot 5k", img: null },
+    { name: "2025 Michigan Half Iron Man", img: "/images/Michigan Ironman.JPG" },
+    { name: "2025 Highland Park Turkey Trot 5k", img: "/images/turkey_trot.jpg" },
+    { name: "Upcoming: 2026 Pettit Indoor Marathon", img: null },
+  ];
 
-        <div className="grid md:grid-cols-2 gap-8 mt-12">
-          <div className="space-y-4">
-            <div className="border-4 border-black shadow-[8px_8px_0_0_rgba(0,0,0,1)] rotate-1 hover:rotate-0 transition-transform overflow-hidden bg-white">
-              <img 
-                src="/images/Ironman.jpg" 
-                alt="2024 Wisconsin Half Ironman"
-                className="w-full h-full object-cover aspect-[4/3]"
-              />
-            </div>
-            <p className="text-center font-bold font-mono text-lg">2024 Wisconsin Half Ironman</p>
+  return (
+    <section className="py-24 bg-white min-h-screen">
+      <div className="container mx-auto px-4">
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="flex items-center gap-3 mb-8 justify-center"
+        >
+          <Trophy className="w-10 h-10 text-yellow-500" />
+          <h2 className="text-4xl font-bold bg-gradient-to-r from-yellow-500 to-orange-500 bg-clip-text text-transparent">
+            Athletic Accomplishments
+          </h2>
+        </motion.div>
+        <motion.div 
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 0.2 }}
+          className="max-w-5xl mx-auto bg-white border-4 border-black p-8 md:p-12 shadow-[12px_12px_0_0_rgba(0,0,0,1)]"
+        >
+          <p className="text-2xl md:text-3xl font-black text-center mb-12 font-mono uppercase leading-relaxed">
+            Since starting to date in August of 2023, Gabe and Sasha have completed a combined:
+          </p>
+          
+          <ul className="space-y-6 text-xl md:text-2xl font-bold text-black mb-16">
+            <li className="flex items-center gap-4 p-4 bg-yellow-100 border-2 border-black shadow-[4px_4px_0_0_rgba(0,0,0,1)] transform -rotate-1 hover:rotate-0 transition-transform">
+              <span className="text-3xl">🏊‍♂️</span>
+              2 Half Iron Mans
+            </li>
+            <li className="flex items-center gap-4 p-4 bg-pink-100 border-2 border-black shadow-[4px_4px_0_0_rgba(0,0,0,1)] transform rotate-1 hover:rotate-0 transition-transform">
+              <span className="text-3xl">🏃‍♂️</span>
+              3 Marathons
+            </li>
+            <li className="flex items-center gap-4 p-4 bg-cyan-100 border-2 border-black shadow-[4px_4px_0_0_rgba(0,0,0,1)] transform -rotate-1 hover:rotate-0 transition-transform">
+              <span className="text-3xl">👟</span>
+              1 Half Marathon
+            </li>
+            <li className="flex items-center gap-4 p-4 bg-purple-100 border-2 border-black shadow-[4px_4px_0_0_rgba(0,0,0,1)] transform rotate-1 hover:rotate-0 transition-transform">
+              <span className="text-3xl">🦃</span>
+              3 Turkey Trots
+            </li>
+          </ul>
+
+          <div className="grid md:grid-cols-2 gap-8">
+            {events.map((event, index) => (
+              <div key={index} className="space-y-4">
+                <div className={`border-4 border-black shadow-[8px_8px_0_0_rgba(0,0,0,1)] ${index % 2 === 0 ? 'rotate-1' : '-rotate-1'} hover:rotate-0 transition-transform overflow-hidden bg-gray-100 aspect-[4/3] relative`}>
+                  {event.img ? (
+                    <img 
+                      src={event.img} 
+                      alt={event.name}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center bg-gray-200">
+                      <span className="text-4xl">🏃‍♂️</span>
+                    </div>
+                  )}
+                </div>
+                <p className="text-center font-bold font-mono text-lg">{event.name}</p>
+              </div>
+            ))}
           </div>
-          <div className="space-y-4">
-            <div className="border-4 border-black shadow-[8px_8px_0_0_rgba(0,0,0,1)] -rotate-1 hover:rotate-0 transition-transform overflow-hidden bg-white">
-              <img 
-                src="/images/turkey_trot.jpg" 
-                alt="2025 Highland Park Turkey Trot"
-                className="w-full h-full object-cover aspect-[4/3] object-[50%_5%]"
-              />
-            </div>
-            <p className="text-center font-bold font-mono text-lg">2025 Highland Park Turkey Trot</p>
-          </div>
-        </div>
-      </motion.div>
-    </div>
-  </section>
-);
+        </motion.div>
+      </div>
+    </section>
+  );
+};
 
 export const FutureKidsPage = () => (
   <section className="py-24 bg-white min-h-screen">

@@ -24,6 +24,7 @@ const Header = () => {
     { path: '/details', label: 'Wedding Details' },
     { path: '/rsvp', label: 'RSVP' },
     { path: '/travel', label: 'Travel Suggestions' },
+    { path: '/registry', label: 'Registry' },
     { path: '/hinge', label: 'Hinge Profiles' },
     { path: '/faq', label: 'FAQ' },
     { path: '/single-guests', label: 'Single Guests' },
