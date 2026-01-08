@@ -83,22 +83,33 @@ export const AthleticPage = () => {
 };
 
 export const FutureKidsPage = () => (
-  <section className="py-24 bg-white min-h-screen">
-    <div className="container mx-auto px-4">
+  <section className="py-24 bg-pink-200 min-h-screen relative overflow-hidden">
+    <div className="absolute inset-0 opacity-10" 
+         style={{ 
+           backgroundImage: 'radial-gradient(#000 2px, transparent 2px)',
+           backgroundSize: '30px 30px'
+         }} 
+    />
+    <div className="container mx-auto px-4 relative z-10">
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         className="flex flex-col items-center gap-6 mb-12 text-center"
       >
-        <div className="flex items-center gap-3">
-          <Baby className="w-10 h-10 text-pink-500" />
-          <h2 className="text-4xl font-bold bg-gradient-to-r from-pink-500 to-blue-500 bg-clip-text text-transparent">
-            See Our Future Kids
-          </h2>
+        <div className="inline-block bg-white border-4 border-black px-8 py-4 shadow-[8px_8px_0_0_#000] transform rotate-1">
+          <div className="flex items-center justify-center gap-3">
+            <Baby className="w-8 h-8 text-black" />
+            <h2 className="text-3xl md:text-5xl font-black uppercase tracking-tighter">
+              See Our Future Kids
+            </h2>
+            <Baby className="w-8 h-8 text-black" />
+          </div>
         </div>
-        <p className="text-2xl font-bold font-mono">
-          This is what AI says our future kids will look like!
-        </p>
+        <div className="bg-white border-4 border-black px-6 py-3 shadow-[4px_4px_0_0_#000] transform -rotate-1">
+          <p className="text-xl md:text-2xl font-bold font-mono">
+            This is what AI says our future kids will look like!
+          </p>
+        </div>
       </motion.div>
 
       <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
@@ -206,20 +217,30 @@ export const MarcoPage = () => {
 };
 
 export const CartagenaPage = () => (
-  <section className="py-24 bg-white min-h-screen">
-    <div className="container mx-auto px-4">
+  <section className="py-24 bg-teal-200 min-h-screen relative overflow-hidden">
+    <div className="absolute inset-0 opacity-10" 
+         style={{ 
+           backgroundImage: 'linear-gradient(#000 2px, transparent 2px), linear-gradient(90deg, #000 2px, transparent 2px)',
+           backgroundSize: '40px 40px'
+         }} 
+    />
+    <div className="container mx-auto px-4 relative z-10">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="flex items-center gap-3 mb-8 justify-center"
+        className="text-center mb-12"
       >
-        <BookOpen className="w-10 h-10 text-blue-500" />
-        <h2 className="text-4xl font-bold bg-gradient-to-r from-blue-500 to-teal-500 bg-clip-text text-transparent">
-          History of Cartagena
-        </h2>
+        <div className="inline-block bg-white border-4 border-black px-8 py-4 shadow-[8px_8px_0_0_#000] transform -rotate-1">
+          <div className="flex items-center justify-center gap-3">
+            <BookOpen className="w-8 h-8 text-black" />
+            <h2 className="text-3xl md:text-5xl font-black uppercase tracking-tighter">
+              History of Cartagena
+            </h2>
+          </div>
+        </div>
       </motion.div>
-      <div className="bg-gradient-to-br from-blue-50 to-teal-50 rounded-2xl p-8 md:p-12 shadow-lg max-w-5xl mx-auto mb-12">
-        <div className="space-y-6 text-gray-700 leading-relaxed">
+      <div className="bg-white border-4 border-black p-8 md:p-12 shadow-[12px_12px_0_0_rgba(0,0,0,1)] max-w-5xl mx-auto mb-12">
+        <div className="space-y-6 text-black font-mono text-lg leading-relaxed">
           <p>
             <strong>Cartagena de Indias</strong>, founded in 1533 by Spanish conquistador Pedro de Heredia, 
             is one of South America's most historically significant cities. Named after Cartagena, Spain, the 
@@ -249,20 +270,20 @@ export const CartagenaPage = () => (
           </p>
         </div>
       </div>
-      <div className="grid md:grid-cols-3 gap-6 max-w-6xl mx-auto">
-        <div className="rounded-xl overflow-hidden shadow-lg">
+      <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+        <div className="border-4 border-black shadow-[8px_8px_0_0_rgba(0,0,0,1)] bg-white hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[4px_4px_0_0_rgba(0,0,0,1)] transition-all">
           <img 
             alt="Historic Cartagena city walls at sunset"
             className="w-full h-full object-cover aspect-[4/3]"
            src="https://images.unsplash.com/photo-1686929405131-eb30a78c0d72" />
         </div>
-        <div className="rounded-xl overflow-hidden shadow-lg">
+        <div className="border-4 border-black shadow-[8px_8px_0_0_rgba(0,0,0,1)] bg-white hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[4px_4px_0_0_rgba(0,0,0,1)] transition-all">
           <img 
             alt="Colorful colonial buildings in Cartagena"
             className="w-full h-full object-cover aspect-[4/3]"
            src="https://images.unsplash.com/photo-1576541453633-b1e3e9b6b72e" />
         </div>
-        <div className="rounded-xl overflow-hidden shadow-lg">
+        <div className="border-4 border-black shadow-[8px_8px_0_0_rgba(0,0,0,1)] bg-white hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[4px_4px_0_0_rgba(0,0,0,1)] transition-all">
           <img 
             alt="Castillo San Felipe de Barajas fortress"
             className="w-full h-full object-cover aspect-[4/3]"

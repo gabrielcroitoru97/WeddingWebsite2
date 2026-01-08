@@ -39,21 +39,29 @@ const FAQ = () => {
   ];
 
   return (
-    <section id="faq" className="py-20 bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50">
-      <div className="container mx-auto px-4">
+    <section id="faq" className="py-24 bg-cyan-200 min-h-screen relative overflow-hidden">
+      <div className="absolute inset-0 opacity-10" 
+           style={{ 
+             backgroundImage: 'radial-gradient(#000 2px, transparent 2px)',
+             backgroundSize: '30px 30px'
+           }} 
+      />
+      <div className="container mx-auto px-4 relative z-10">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           className="text-center mb-16"
         >
-          <div className="flex items-center justify-center gap-3 mb-4">
-            <HelpCircle className="w-10 h-10 text-purple-500" />
-            <h2 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-purple-500 via-pink-500 to-blue-500 bg-clip-text text-transparent">
-              Frequently Asked Questions
-            </h2>
+          <div className="inline-block bg-white border-4 border-black px-8 py-4 shadow-[8px_8px_0_0_#000] transform -rotate-1 mb-6">
+            <div className="flex items-center justify-center gap-3">
+              <HelpCircle className="w-8 h-8 text-black" />
+              <h2 className="text-3xl md:text-5xl font-black uppercase tracking-tighter">
+                Frequently Asked Questions
+              </h2>
+            </div>
           </div>
-          <p className="text-gray-600 text-lg">Everything you need to know</p>
+          <p className="text-xl font-bold font-mono bg-white inline-block px-4 py-2 border-2 border-black shadow-[4px_4px_0_0_#000] transform rotate-1">Everything you need to know</p>
         </motion.div>
 
         <div className="max-w-4xl mx-auto space-y-6">
@@ -64,10 +72,10 @@ const FAQ = () => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: index * 0.05 }}
-              className="bg-white rounded-2xl p-6 md:p-8 shadow-lg hover:shadow-xl transition-shadow"
+              className="bg-white border-4 border-black p-6 md:p-8 shadow-[8px_8px_0_0_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[4px_4px_0_0_rgba(0,0,0,1)] transition-all"
             >
-              <h3 className="text-xl font-bold text-gray-800 mb-3">{faq.question}</h3>
-              <p className="text-gray-700 leading-relaxed">{faq.answer}</p>
+              <h3 className="text-xl font-black uppercase text-black mb-3">{faq.question}</h3>
+              <p className="text-black font-mono text-lg leading-relaxed">{faq.answer}</p>
             </motion.div>
           ))}
         </div>
