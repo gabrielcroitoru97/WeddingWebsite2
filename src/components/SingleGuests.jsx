@@ -56,7 +56,7 @@ const SingleGuests = () => {
               What's better than a wedding? A wedding that spawns more weddings! What better place to meet someone than an event taking place in a romantic setting where everyone in the room has been vetted as a quality person.
             </p>
             <p>
-              But how are you to know who is and isn't single? Introducing the single slide decks! Click in to see who the other people are at the wedding. Want to be added? At the end of each slide deck is a template, simply create a copy, fill out your information, and you're officially on the market!
+              But how are you to know who is and isn't single? Introducing the single slide decks, a one stop shop to see who is single and find your match. To get the password, fill out a slide for yourself (see the sample slides link for examples and a template) and send it to Gabriel or Sasha, who will add it to the deck and give you access.
             </p>
           </div>
         </motion.div>

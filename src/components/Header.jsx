@@ -31,7 +31,6 @@ const Header = () => {
   ];
 
   const moreLinks = [
-    { label: 'Athletic Accomplishments', path: '/more/athletic' },
     { label: "Gabe's Favorite Joke", path: '/more/joke' },
     { label: 'Marco', path: '/more/marco' },
     { label: 'History of Cartagena', path: '/more/cartagena' },

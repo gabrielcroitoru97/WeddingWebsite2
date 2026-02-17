@@ -101,7 +101,7 @@ const Registry = () => {
             </div>
             <div className="mt-8 text-center font-mono text-sm md:text-base italic text-gray-600 border-t-2 border-black pt-4">
               <p>
-                Note: These tiers are jokes, please do not expect any of these prizes. Especially please do not wear white to the wedding because Sasha will blame me and I will blame you for not reading this note
+                Note: These tiers are jokes, please do not expect any of these prizes. Also, again, we do not expect any gifts, the travel to the wedding is gift enough
               </p>
             </div>
           </div>
