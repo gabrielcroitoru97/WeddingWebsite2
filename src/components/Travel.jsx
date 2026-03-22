@@ -40,7 +40,7 @@ const Travel = () => {
             <div className="space-y-3 text-black font-mono text-lg">
               <p><strong>Airport:</strong> Rafael Núñez International Airport (CTG)</p>
               <p><strong>Direct flights from:</strong> Miami, Fort Lauderdale, New York, Panama City, and more</p>
-              <p><strong>Transfer:</strong> 20 minutes to the Hilton</p>
+              <p><strong>Transfer:</strong> 20 minutes to the Hilton, we recommend calling an Uber from the airport</p>
               <p className="text-sm text-black italic mt-4 border-t-2 border-black pt-2">
                 We recommend booking flights early for the best rates. Most US citizens need a passport valid for 6 months.
               </p>
@@ -61,7 +61,10 @@ const Travel = () => {
               <p><strong>Hotel Block:</strong> Hilton Hotel</p>
               <p><strong>Booking Code:</strong> TBD</p>
               <p><strong>Special Rate:</strong> Available until TBD, 2026</p>
-              
+              <div className="text-sm text-black italic mt-4 border-t-2 border-black pt-2 space-y-2">
+                <p>We recommend staying at the Hilton because all of our celebrations will be held on-site. This comes with the added benefit of having all of our favorite people under one roof to make the weekend truly special!</p>
+                <p>We also highly recommend using the room block to book as this will provide you the best rate. Using the link above avoids a 19% tax that is applied at check-in if you book independently through the Hilton or other 3rd party sites.</p>
+              </div>
             </div>
           </motion.div>
         </div>
@@ -86,7 +89,6 @@ const Travel = () => {
               <li>• Relax on the Rosario Islands</li>
               <li>• Attend a shabbat dinner</li>
               <li>• Take a sunset cruise on the bay</li>
-              <li>• Give generously to a Colombian man's wedding registry</li>
             </ul>
           </motion.div>
 
@@ -107,7 +109,6 @@ const Travel = () => {
               <li>• <strong>Language:</strong> Spanish (English in tourist areas)</li>
               <li>• <strong>Dress:</strong> Light, breathable fabrics recommended</li>
               <li>• <strong>Safety:</strong> Stick to tourist areas, use Ubers, don't hail a taxi from the street</li>
-              <li>• <strong>Best time to arrive:</strong> Thursday or Friday before</li>
             </ul>
           </motion.div>
         </div>

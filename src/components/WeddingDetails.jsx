@@ -1,51 +1,78 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { MapPin, Clock, Heart, Music, Sun, Coffee, Ticket } from 'lucide-react';
+import { MapPin, Clock, Heart, Music, Sun, Wine, Ticket, Shirt, Star, Users, Moon } from 'lucide-react';
 import { cn } from '@/lib/utils';
 const WeddingDetails = () => {
   const timelineData = [{
     date: "Friday, Jan 15, 2027",
     events: [{
       title: "Old City Tour",
-      time: "9:00 AM",
-      location: "Hilton Lobby",
+      time: "Morning (exact time TBD)",
+      location: "Meet in Hilton Lobby for Buses",
       description: "Fun Fact: The reason they call it an old city is because it is older than most other cities",
       icon: MapPin,
-      color: "bg-pink-200"
+      color: "bg-pink-200",
+      dressCode: "Casual, wear walking shoes"
     }, {
-      title: "Shabbat Dinner",
-      time: "7:00 PM",
-      location: "Hilton Gardens",
-      description: "17th person to show up gets to say the Hamotzi",
-      icon: Coffee,
-      color: "bg-yellow-200"
+      title: "Shabbat",
+      time: "6:30 PM",
+      icon: Wine,
+      color: "bg-indigo-200",
+      dressCode: "Dressy casual (think tropical: sundresses, linen shirts, short sleeve button downs, etc)",
+      subEvents: [{
+        title: "Kabbalat Shabbat",
+        time: "5:45 PM",
+        location: "The Beach",
+        description: "Optional Shabbat services at the beach led by Joey Becker."
+      }, {
+        title: "Shabbat Dinner",
+        time: "6:30 PM",
+        location: "Hilton Gardens",
+        description: "18th person to show up gets to say the Hamotzi"
+      }, {
+        title: "Tisch",
+        time: "Following Shabbat Dinner",
+        location: "Hilton Gardens",
+        description: "A chance for the friends of the couple to have a few drinks and toast to the bride and groom. Of course all are welcome, but this event is really geared towards the younger crowd."
+      }]
     }]
   }, {
     date: "Saturday, Jan 16, 2027",
     events: [{
       title: "Pool Party",
-      time: "1:00 PM",
+      time: "2:00 PM",
       location: "Hilton Pool",
       description: "The Hilton has an artificial body of water 30 ft from a natural body of water, you'll have to see it to believe it",
       icon: Sun,
-      color: "bg-cyan-200"
+      color: "bg-cyan-200",
+      dressCode: "Pool attire"
+    }, {
+      title: "Havdalah",
+      time: "5:45 PM",
+      location: "The Beach",
+      description: "An optional brief ceremony to close out Shabbat. Come see our cool twisty candle",
+      icon: Moon,
+      color: "bg-indigo-300",
+      dressCode: "Casual"
     }]
   }, {
     date: "Sunday, Jan 17, 2027",
     events: [{
       title: "The Ceremony",
-      time: "6:00 PM",
+      time: "5:30 PM",
       location: "Hilton Garden",
       description: "Come early to make sure you get a little hat",
       icon: Heart,
-      color: "bg-green-200"
+      color: "bg-green-200",
+      dressCode: "Cocktail/ formal (suits, dresses)"
     }, {
       title: "The Reception",
-      time: "7:00 PM",
+      time: "Following the Ceremony",
       location: "Hilton Ballroom",
       description: "If you haven't seen a Latino Jewish Hora, make sure you bring closed toed shoes. And maybe a mouth guard. And make sure your health and life insurances are up to date.",
       icon: Music,
-      color: "bg-purple-200"
+      color: "bg-purple-200",
+      dressCode: "Cocktail/ formal (suits, dresses)"
     }]
   }];
   return <div className="min-h-screen bg-gray-50 py-12 px-4" style={{
@@ -124,29 +151,56 @@ const WeddingDetails = () => {
                           </div>
                         </div>
 
-                        <div className="flex items-center gap-2 mb-3 font-bold text-lg">
-                          <MapPin className="w-5 h-5" />
-                          {event.location}
-                        </div>
+                        {event.location && (
+                          <div className="flex items-center gap-2 mb-3 font-bold text-lg">
+                            <MapPin className="w-5 h-5" />
+                            {event.location}
+                          </div>
+                        )}
 
-                        <p className="font-medium text-lg leading-relaxed border-l-4 border-black pl-4">
-                          {event.description}
-                        </p>
+                        {event.dressCode && (
+                          <div className="flex items-center gap-2 mb-3 font-bold text-lg">
+                            <Shirt className="w-5 h-5" />
+                            Dress Code: {event.dressCode}
+                          </div>
+                        )}
+
+                        {event.description && (
+                          <p className="font-medium text-lg leading-relaxed border-l-4 border-black pl-4">
+                            {event.description}
+                          </p>
+                        )}
+
+                        {event.subEvents && (
+                          <div className="space-y-5 mt-4 border-l-4 border-black pl-4 py-1">
+                            {event.subEvents.map((subEvent, idx) => (
+                              <div key={idx}>
+                                <div className="flex flex-wrap items-center gap-2 mb-1">
+                                  <h4 className="font-bold uppercase text-lg">{subEvent.title}</h4>
+                                  <div className="flex items-center gap-1 bg-black text-white px-2 py-0.5 font-mono font-bold text-xs">
+                                    <Clock className="w-3 h-3" />
+                                    {subEvent.time}
+                                  </div>
+                                </div>
+                                {subEvent.location && (
+                                  <div className="flex items-center gap-1 mb-1 font-bold text-sm text-gray-800">
+                                    <MapPin className="w-4 h-4" />
+                                    {subEvent.location}
+                                  </div>
+                                )}
+                                <p className="font-medium text-base">
+                                  {subEvent.description}
+                                </p>
+                              </div>
+                            ))}
+                          </div>
+                        )}
                       </div>
                     </motion.div>;
             })}
               </div>
             </div>)}
         </div>
-
-        {/* Footer Note */}
-        <motion.div initial={{
-        opacity: 0
-      }} whileInView={{
-        opacity: 1
-      }} className="mt-16 text-center bg-white border-2 border-black p-6 shadow-[4px_4px_0_0_rgba(0,0,0,1)] max-w-md mx-auto transform rotate-1">
-          <p className="font-bold font-mono">Now with 20% more chutzpah!</p>
-        </motion.div>
       </div>
     </div>;
 };

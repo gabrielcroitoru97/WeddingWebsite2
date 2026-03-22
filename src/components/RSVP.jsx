@@ -15,6 +15,7 @@ const RSVP = () => {
   const [searchResults, setSearchResults] = useState([]);
   const [showForm, setShowForm] = useState(false);
   const [formData, setFormData] = useState({
+    id: null,
     guestName: '',
     email: '',
     attendingTour: false,
@@ -71,7 +72,7 @@ const RSVP = () => {
     try {
       const { data, error } = await supabase
         .from('rsvps')
-        .select('id')
+        .select('*')
         .eq('guest_name', guest.name);
 
       if (error) throw error;
@@ -80,17 +81,35 @@ const RSVP = () => {
 
       if (data && data.length > 0) {
         toast({
-          variant: "destructive",
-          title: "Already Submitted",
-          description: "An RSVP has already been submitted for this guest."
+          title: "Existing RSVP Found",
+          description: "You have already submitted an RSVP. You can update your responses below."
         });
-        return;
+        const existingRSVP = data[0];
+        setFormData({
+          id: existingRSVP.id,
+          guestName: existingRSVP.guest_name,
+          email: existingRSVP.email || '',
+          attendingTour: existingRSVP.attending_tour || false,
+          attendingShabbat: existingRSVP.attending_shabbat || false,
+          attendingPoolParty: existingRSVP.attending_pool_party || false,
+          attendingWedding: existingRSVP.attending_wedding || false,
+          dietaryRestrictions: existingRSVP.dietary_restrictions || '',
+          additionalNotes: existingRSVP.additional_notes || ''
+        });
+      } else {
+        setFormData({
+          id: null,
+          guestName: guest.name,
+          email: '',
+          attendingTour: false,
+          attendingShabbat: false,
+          attendingPoolParty: false,
+          attendingWedding: false,
+          dietaryRestrictions: '',
+          additionalNotes: ''
+        });
       }
 
-      setFormData({
-        ...formData,
-        guestName: guest.name
-      });
       setShowForm(true);
       setSearchResults([]);
     } catch (error) {
@@ -109,9 +128,7 @@ const RSVP = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      const {
-        error
-      } = await supabase.from('rsvps').insert([{
+      const rsvpData = {
         guest_name: formData.guestName,
         email: formData.email,
         attending_tour: formData.attendingTour,
@@ -120,10 +137,31 @@ const RSVP = () => {
         attending_wedding: formData.attendingWedding,
         dietary_restrictions: formData.dietaryRestrictions,
         additional_notes: formData.additionalNotes
-      }]);
+      };
+
+      let error;
+      if (formData.id) {
+        const { data, error: updateError } = await supabase
+          .from('rsvps')
+          .update(rsvpData)
+          .eq('id', formData.id)
+          .select();
+        error = updateError;
+
+        if (!error && (!data || data.length === 0)) {
+          throw new Error("Update failed. Please check your Supabase dashboard and ensure the 'rsvps' table has an RLS policy that allows UPDATE operations.");
+        }
+      } else {
+        const { error: insertError } = await supabase
+          .from('rsvps')
+          .insert([rsvpData]);
+        error = insertError;
+      }
+
       if (error) throw error;
+
       toast({
-        title: "RSVP Submitted! 🎉",
+        title: formData.id ? "RSVP Updated! 🎉" : "RSVP Submitted! 🎉",
         description: formData.attendingWedding ? "We can't wait to celebrate with you!" : "Thank you for letting us know."
       });
 
@@ -131,6 +169,7 @@ const RSVP = () => {
       setShowForm(false);
       setSearchName('');
       setFormData({
+        id: null,
         guestName: '',
         email: '',
         attendingTour: false,
@@ -179,11 +218,6 @@ const RSVP = () => {
             <h2 className="text-4xl md:text-6xl font-black uppercase tracking-tighter">
               RSVP
             </h2>
-          </div>
-          <div className="block">
-            <p className="text-xl font-bold font-mono bg-white inline-block px-4 py-2 border-2 border-black shadow-[4px_4px_0_0_#000] transform rotate-1">
-              Please let us know if you can join us. If you can't then please delete our numbers and consider our friendship over.
-            </p>
           </div>
         </motion.div>
 
@@ -239,6 +273,14 @@ const RSVP = () => {
                 Complete Your RSVP
               </h3>
 
+              {formData.id && (
+                <div className="bg-yellow-300 border-2 border-black p-4 mb-6 shadow-[4px_4px_0_0_rgba(0,0,0,1)] transform -rotate-1">
+                  <p className="font-bold font-mono text-black text-center text-sm md:text-base">
+                    Note: You have already submitted an RSVP. You can update your responses below.
+                  </p>
+                </div>
+              )}
+
               <div className="space-y-6">
                 <div>
                   <Label htmlFor="guestName" className="font-bold font-mono text-black uppercase">Guest Name</Label>
@@ -257,10 +299,10 @@ const RSVP = () => {
                   <Label className="mb-3 block font-bold font-mono text-black uppercase">Which events will you be attending?</Label>
                   <div className="space-y-3">
                     {[
-                      { id: 'attendingTour', label: 'Old City Tour', date: 'Friday, Jan 15 @ 9:00 AM' },
-                      { id: 'attendingShabbat', label: 'Shabbat Dinner', date: 'Friday, Jan 15 @ 7:00 PM' },
-                      { id: 'attendingPoolParty', label: 'Pool Party', date: 'Saturday, Jan 16 @ 1:00 PM' },
-                      { id: 'attendingWedding', label: 'The Wedding', date: 'Sunday, Jan 17 @ 6:00 PM' },
+                      { id: 'attendingTour', label: 'Old City Tour', date: 'Friday, Jan 15 @ Morning' },
+                      { id: 'attendingShabbat', label: 'Shabbat', date: 'Friday, Jan 15 @ 6:30 PM' },
+                      { id: 'attendingPoolParty', label: 'Pool Party', date: 'Saturday, Jan 16 @ 2:00 PM' },
+                      { id: 'attendingWedding', label: 'The Wedding', date: 'Sunday, Jan 17 @ 5:30 PM' },
                     ].map((event) => (
                       <div 
                         key={event.id}
@@ -306,7 +348,7 @@ const RSVP = () => {
                     Back
                   </Button>
                   <Button type="submit" disabled={loading} className="flex-1 bg-purple-500 text-black border-2 border-black rounded-none shadow-[4px_4px_0_0_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0_0_rgba(0,0,0,1)] transition-all font-bold font-mono uppercase">
-                    {loading ? 'Submitting...' : 'Submit RSVP'}
+                    {loading ? 'Submitting...' : (formData.id ? 'Update RSVP' : 'Submit RSVP')}
                   </Button>
                 </div>
               </div>
