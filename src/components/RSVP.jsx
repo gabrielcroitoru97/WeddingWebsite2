@@ -116,7 +116,6 @@ const RSVP = () => {
         return {
           id: existingRsvp?.id || null,
           guestName: g.name,
-          email: existingRsvp?.email || '',
           attendingTour: existingRsvp?.attending_tour || false,
           attendingShabbat: existingRsvp?.attending_shabbat || false,
           attendingPoolParty: existingRsvp?.attending_pool_party || false,
@@ -154,7 +153,6 @@ const RSVP = () => {
       for (const formData of rsvps) {
         const rsvpData = {
           guest_name: formData.guestName,
-          email: formData.email,
           attending_tour: formData.attendingTour,
           attending_shabbat: formData.attendingShabbat,
           attending_pool_party: formData.attendingPoolParty,
@@ -312,12 +310,28 @@ const RSVP = () => {
 
                     <div className="mt-6 space-y-6">
                       <div>
-                        <Label className="font-bold font-mono text-black uppercase">Email (Optional)</Label>
-                        <Input type="email" value={rsvp.email} onChange={e => updateRsvp(index, 'email', e.target.value)} className="border-2 border-black rounded-none font-mono bg-white mt-1" />
-                      </div>
-
-                      <div>
-                        <Label className="mb-3 block font-bold font-mono text-black uppercase">Which events will {rsvp.guestName.split(' ')[0]} be attending?</Label>
+                        <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-3 gap-2">
+                          <Label className="block font-bold font-mono text-black uppercase">Which events will {rsvp.guestName.split(' ')[0]} be attending?</Label>
+                          <button 
+                            type="button"
+                            onClick={() => {
+                              const isAttendingAll = rsvp.attendingTour && rsvp.attendingShabbat && rsvp.attendingPoolParty && rsvp.attendingWedding;
+                              const newValue = !isAttendingAll;
+                              const newRsvps = [...rsvps];
+                              newRsvps[index] = {
+                                ...newRsvps[index],
+                                attendingTour: newValue,
+                                attendingShabbat: newValue,
+                                attendingPoolParty: newValue,
+                                attendingWedding: newValue
+                              };
+                              setRsvps(newRsvps);
+                            }}
+                            className="text-xs font-bold font-mono uppercase bg-black text-white px-3 py-1 hover:bg-purple-500 hover:text-black border-2 border-black shadow-[2px_2px_0_0_rgba(0,0,0,1)] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all"
+                          >
+                            {rsvp.attendingTour && rsvp.attendingShabbat && rsvp.attendingPoolParty && rsvp.attendingWedding ? 'Deselect All' : 'Select All'}
+                          </button>
+                        </div>
                         <div className="space-y-3">
                           {[
                             { id: 'attendingTour', label: 'Old City Tour', date: 'Friday, Jan 15 @ Morning' },
