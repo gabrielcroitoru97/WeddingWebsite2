@@ -14,17 +14,7 @@ const RSVP = () => {
   const [searchName, setSearchName] = useState('');
   const [searchResults, setSearchResults] = useState([]);
   const [showForm, setShowForm] = useState(false);
-  const [formData, setFormData] = useState({
-    id: null,
-    guestName: '',
-    email: '',
-    attendingTour: false,
-    attendingShabbat: false,
-    attendingPoolParty: false,
-    attendingWedding: false,
-    dietaryRestrictions: '',
-    additionalNotes: ''
-  });
+  const [rsvps, setRsvps] = useState([]);
   const [loading, setLoading] = useState(false);
   
   const handleSearch = async () => {
@@ -32,15 +22,48 @@ const RSVP = () => {
       setLoading(true);
       setSearchResults([]);
       try {
-        const { data, error } = await supabase
+        const { data: matchedGuests, error } = await supabase
           .from('guests')
           .select('*')
           .ilike('name', `%${searchName}%`);
 
         if (error) throw error;
 
-        if (data && data.length > 0) {
-          setSearchResults(data);
+        if (matchedGuests && matchedGuests.length > 0) {
+          const groupIds = [...new Set(matchedGuests.map(g => g.group_id).filter(id => id))];
+          let allGuests = [...matchedGuests];
+          
+          if (groupIds.length > 0) {
+            const { data: groupMembers, error: groupError } = await supabase
+              .from('guests')
+              .select('*')
+              .in('group_id', groupIds);
+              
+            if (groupError) throw groupError;
+            
+            const guestMap = new Map();
+            allGuests.forEach(g => guestMap.set(g.id || g.name, g));
+            if (groupMembers) {
+              groupMembers.forEach(g => guestMap.set(g.id || g.name, g));
+            }
+            allGuests = Array.from(guestMap.values());
+          }
+
+          const groupedResults = [];
+          const processedGroupIds = new Set();
+          
+          allGuests.forEach(g => {
+            if (g.group_id) {
+              if (!processedGroupIds.has(g.group_id)) {
+                groupedResults.push(allGuests.filter(ag => ag.group_id === g.group_id));
+                processedGroupIds.add(g.group_id);
+              }
+            } else {
+              groupedResults.push([g]);
+            }
+          });
+
+          setSearchResults(groupedResults);
         } else {
           toast({
             variant: "destructive",
@@ -67,49 +90,43 @@ const RSVP = () => {
     }
   };
 
-  const handleSelectGuest = async (guest) => {
+  const handleSelectGroup = async (groupGuests) => {
     setLoading(true);
     try {
-      const { data, error } = await supabase
+
+      // Fetch RSVPs for all guests in the group
+      const guestNames = groupGuests.map(g => g.name);
+      const { data: existingRsvpsData, error: rsvpError } = await supabase
         .from('rsvps')
         .select('*')
-        .eq('guest_name', guest.name);
+        .in('guest_name', guestNames);
 
-      if (error) throw error;
+      if (rsvpError) throw rsvpError;
 
-      console.log('Checking existing RSVPs:', data);
-
-      if (data && data.length > 0) {
+      if (existingRsvpsData && existingRsvpsData.length > 0) {
         toast({
-          title: "Existing RSVP Found",
-          description: "You have already submitted an RSVP. You can update your responses below."
-        });
-        const existingRSVP = data[0];
-        setFormData({
-          id: existingRSVP.id,
-          guestName: existingRSVP.guest_name,
-          email: existingRSVP.email || '',
-          attendingTour: existingRSVP.attending_tour || false,
-          attendingShabbat: existingRSVP.attending_shabbat || false,
-          attendingPoolParty: existingRSVP.attending_pool_party || false,
-          attendingWedding: existingRSVP.attending_wedding || false,
-          dietaryRestrictions: existingRSVP.dietary_restrictions || '',
-          additionalNotes: existingRSVP.additional_notes || ''
-        });
-      } else {
-        setFormData({
-          id: null,
-          guestName: guest.name,
-          email: '',
-          attendingTour: false,
-          attendingShabbat: false,
-          attendingPoolParty: false,
-          attendingWedding: false,
-          dietaryRestrictions: '',
-          additionalNotes: ''
+          title: "Existing RSVPs Found",
+          description: "You can update the responses for your group below."
         });
       }
 
+      // Initialize form state for all guests in the group
+      const initialRsvps = groupGuests.map(g => {
+        const existingRsvp = existingRsvpsData?.find(r => r.guest_name === g.name);
+        return {
+          id: existingRsvp?.id || null,
+          guestName: g.name,
+          email: existingRsvp?.email || '',
+          attendingTour: existingRsvp?.attending_tour || false,
+          attendingShabbat: existingRsvp?.attending_shabbat || false,
+          attendingPoolParty: existingRsvp?.attending_pool_party || false,
+          attendingWedding: existingRsvp?.attending_wedding || false,
+          dietaryRestrictions: existingRsvp?.dietary_restrictions || '',
+          additionalNotes: existingRsvp?.additional_notes || ''
+        };
+      });
+
+      setRsvps(initialRsvps);
       setShowForm(true);
       setSearchResults([]);
     } catch (error) {
@@ -124,67 +141,68 @@ const RSVP = () => {
     }
   };
 
+  const updateRsvp = (index, field, value) => {
+    const newRsvps = [...rsvps];
+    newRsvps[index] = { ...newRsvps[index], [field]: value };
+    setRsvps(newRsvps);
+  };
+
   const handleSubmit = async e => {
     e.preventDefault();
     setLoading(true);
     try {
-      const rsvpData = {
-        guest_name: formData.guestName,
-        email: formData.email,
-        attending_tour: formData.attendingTour,
-        attending_shabbat: formData.attendingShabbat,
-        attending_pool_party: formData.attendingPoolParty,
-        attending_wedding: formData.attendingWedding,
-        dietary_restrictions: formData.dietaryRestrictions,
-        additional_notes: formData.additionalNotes
-      };
+      for (const formData of rsvps) {
+        const rsvpData = {
+          guest_name: formData.guestName,
+          email: formData.email,
+          attending_tour: formData.attendingTour,
+          attending_shabbat: formData.attendingShabbat,
+          attending_pool_party: formData.attendingPoolParty,
+          attending_wedding: formData.attendingWedding,
+          dietary_restrictions: formData.dietaryRestrictions,
+          additional_notes: formData.additionalNotes
+        };
 
-      let error;
-      if (formData.id) {
-        const { data, error: updateError } = await supabase
-          .from('rsvps')
-          .update(rsvpData)
-          .eq('id', formData.id)
-          .select();
-        error = updateError;
+        let error;
+        if (formData.id) {
+          const { data, error: updateError } = await supabase
+            .from('rsvps')
+            .update(rsvpData)
+            .eq('id', formData.id)
+            .select();
+          error = updateError;
 
-        if (!error && (!data || data.length === 0)) {
-          throw new Error("Update failed. Please check your Supabase dashboard and ensure the 'rsvps' table has an RLS policy that allows UPDATE operations.");
+          if (!error && (!data || data.length === 0)) {
+            throw new Error(`Update failed for ${formData.guestName}. Please check your Supabase dashboard and ensure the 'rsvps' table has an RLS policy that allows UPDATE operations.`);
+          }
+        } else {
+          const { error: insertError } = await supabase
+            .from('rsvps')
+            .insert([rsvpData]);
+          error = insertError;
         }
-      } else {
-        const { error: insertError } = await supabase
-          .from('rsvps')
-          .insert([rsvpData]);
-        error = insertError;
+
+        if (error) throw error;
       }
 
-      if (error) throw error;
+      const anyAttending = rsvps.some(r => r.attendingWedding);
+      const anyUpdated = rsvps.some(r => r.id);
 
       toast({
-        title: formData.id ? "RSVP Updated! 🎉" : "RSVP Submitted! 🎉",
-        description: formData.attendingWedding ? "We can't wait to celebrate with you!" : "Thank you for letting us know."
+        title: anyUpdated ? "RSVPs Updated! 🎉" : "RSVPs Submitted! 🎉",
+        description: anyAttending ? "We can't wait to celebrate with you!" : "Thank you for letting us know."
       });
 
       // Reset form
       setShowForm(false);
       setSearchName('');
-      setFormData({
-        id: null,
-        guestName: '',
-        email: '',
-        attendingTour: false,
-        attendingShabbat: false,
-        attendingPoolParty: false,
-        attendingWedding: false,
-        dietaryRestrictions: '',
-        additionalNotes: ''
-      });
+      setRsvps([]);
     } catch (error) {
       if (error.code === '23505') {
         toast({
           variant: "destructive",
           title: "Already Submitted",
-          description: "An RSVP has already been submitted for this guest."
+          description: "An RSVP has already been submitted for one of these guests."
         });
       } else {
         toast({
@@ -249,15 +267,19 @@ const RSVP = () => {
               
               {searchResults.length > 0 && (
                 <div className="mt-6 space-y-2 animate-in fade-in slide-in-from-top-4">
-                  <p className="font-mono font-bold text-center mb-2">Select your name:</p>
-                  {searchResults.map((guest) => (
+                  <p className="font-mono font-bold text-center mb-2">Select your party:</p>
+                  {searchResults.map((group) => (
                     <button
-                      key={guest.id || guest.name}
-                      onClick={() => handleSelectGuest(guest)}
+                      key={group[0].group_id || group[0].id || group[0].name}
+                      onClick={() => handleSelectGroup(group)}
                       disabled={loading}
                       className="w-full p-3 text-left bg-white border-2 border-black shadow-[4px_4px_0_0_rgba(0,0,0,1)] hover:bg-purple-100 hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[3px_3px_0_0_rgba(0,0,0,1)] transition-all font-mono font-bold uppercase disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                      {guest.name}
+                      <div className="flex flex-col gap-1">
+                        {group.map((g, idx) => (
+                          <span key={g.id || idx}>{g.name}</span>
+                        ))}
+                      </div>
                     </button>
                   ))}
                 </div>
@@ -268,87 +290,83 @@ const RSVP = () => {
         }} animate={{
           opacity: 1,
           y: 0
-        }} onSubmit={handleSubmit} className="bg-white border-4 border-black p-8 shadow-[12px_12px_0_0_rgba(0,0,0,1)]">
+        }} onSubmit={handleSubmit} className="bg-white border-4 border-black p-4 md:p-8 shadow-[12px_12px_0_0_rgba(0,0,0,1)]">
               <h3 className="text-2xl font-black uppercase text-black mb-6 text-center">
                 Complete Your RSVP
               </h3>
 
-              {formData.id && (
+              {rsvps.some(r => r.id) && (
                 <div className="bg-yellow-300 border-2 border-black p-4 mb-6 shadow-[4px_4px_0_0_rgba(0,0,0,1)] transform -rotate-1">
                   <p className="font-bold font-mono text-black text-center text-sm md:text-base">
-                    Note: You have already submitted an RSVP. You can update your responses below.
+                    Note: You have already submitted an RSVP for this group. You can update your responses below.
                   </p>
                 </div>
               )}
 
-              <div className="space-y-6">
-                <div>
-                  <Label htmlFor="guestName" className="font-bold font-mono text-black uppercase">Guest Name</Label>
-                  <Input id="guestName" value={formData.guestName} readOnly className="border-2 border-black rounded-none font-mono bg-gray-100 cursor-not-allowed" />
-                </div>
+              <div className="space-y-12">
+                {rsvps.map((rsvp, index) => (
+                  <div key={rsvp.guestName} className="border-4 border-black p-4 md:p-6 bg-gray-50 relative">
+                    <div className="absolute -top-4 -left-4 bg-purple-400 border-2 border-black px-4 py-1 shadow-[4px_4px_0_0_rgba(0,0,0,1)] transform -rotate-2">
+                      <h4 className="font-black uppercase text-lg">{rsvp.guestName}</h4>
+                    </div>
 
-                <div>
-                  <Label htmlFor="email" className="font-bold font-mono text-black uppercase">Email (Optional)</Label>
-                  <Input id="email" type="email" value={formData.email} onChange={e => setFormData({
-                ...formData,
-                email: e.target.value
-              })} className="border-2 border-black rounded-none font-mono" />
-                </div>
+                    <div className="mt-6 space-y-6">
+                      <div>
+                        <Label className="font-bold font-mono text-black uppercase">Email (Optional)</Label>
+                        <Input type="email" value={rsvp.email} onChange={e => updateRsvp(index, 'email', e.target.value)} className="border-2 border-black rounded-none font-mono bg-white mt-1" />
+                      </div>
 
-                <div>
-                  <Label className="mb-3 block font-bold font-mono text-black uppercase">Which events will you be attending?</Label>
-                  <div className="space-y-3">
-                    {[
-                      { id: 'attendingTour', label: 'Old City Tour', date: 'Friday, Jan 15 @ Morning' },
-                      { id: 'attendingShabbat', label: 'Shabbat', date: 'Friday, Jan 15 @ 6:30 PM' },
-                      { id: 'attendingPoolParty', label: 'Pool Party', date: 'Saturday, Jan 16 @ 2:00 PM' },
-                      { id: 'attendingWedding', label: 'The Wedding', date: 'Sunday, Jan 17 @ 5:30 PM' },
-                    ].map((event) => (
-                      <div 
-                        key={event.id}
-                        className={`flex items-center space-x-3 p-3 border-2 border-black shadow-[4px_4px_0_0_rgba(0,0,0,1)] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[2px_2px_0_0_rgba(0,0,0,1)] transition-all cursor-pointer ${formData[event.id] ? 'bg-purple-100' : 'bg-white'}`}
-                        onClick={() => setFormData({ ...formData, [event.id]: !formData[event.id] })}
-                      >
-                        <div className={`w-6 h-6 border-2 border-black flex items-center justify-center transition-colors ${formData[event.id] ? 'bg-black' : 'bg-white'}`}>
-                          {formData[event.id] && <Check className="text-white w-4 h-4" />}
-                        </div>
-                        <div>
-                          <p className="font-bold font-mono uppercase text-sm md:text-base">{event.label}</p>
-                          <p className="font-mono text-xs md:text-sm text-gray-600">{event.date}</p>
+                      <div>
+                        <Label className="mb-3 block font-bold font-mono text-black uppercase">Which events will {rsvp.guestName.split(' ')[0]} be attending?</Label>
+                        <div className="space-y-3">
+                          {[
+                            { id: 'attendingTour', label: 'Old City Tour', date: 'Friday, Jan 15 @ Morning' },
+                            { id: 'attendingShabbat', label: 'Shabbat', date: 'Friday, Jan 15 @ 6:30 PM' },
+                            { id: 'attendingPoolParty', label: 'Pool Party', date: 'Saturday, Jan 16 @ 2:00 PM' },
+                            { id: 'attendingWedding', label: 'The Wedding', date: 'Sunday, Jan 17 @ 5:30 PM' },
+                          ].map((event) => (
+                            <div 
+                              key={event.id}
+                              className={`flex items-center space-x-3 p-3 border-2 border-black shadow-[4px_4px_0_0_rgba(0,0,0,1)] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[2px_2px_0_0_rgba(0,0,0,1)] transition-all cursor-pointer ${rsvp[event.id] ? 'bg-purple-100' : 'bg-white'}`}
+                              onClick={() => updateRsvp(index, event.id, !rsvp[event.id])}
+                            >
+                              <div className={`w-6 h-6 border-2 border-black flex items-center justify-center transition-colors ${rsvp[event.id] ? 'bg-black' : 'bg-white'}`}>
+                                {rsvp[event.id] && <Check className="text-white w-4 h-4" />}
+                              </div>
+                              <div>
+                                <p className="font-bold font-mono uppercase text-sm md:text-base">{event.label}</p>
+                                <p className="font-mono text-xs md:text-sm text-gray-600">{event.date}</p>
+                              </div>
+                            </div>
+                          ))}
                         </div>
                       </div>
-                    ))}
-                  </div>
-                </div>
 
-                {(formData.attendingTour || formData.attendingShabbat || formData.attendingPoolParty || formData.attendingWedding) && (
-                  <div className="animate-in fade-in slide-in-from-top-4 space-y-6">
-                    <div>
-                      <Label htmlFor="dietaryRestrictions" className="font-bold font-mono text-black uppercase">
-                        Dietary Restrictions or Allergies
-                      </Label>
-                      <Textarea id="dietaryRestrictions" placeholder="Please let us know about any dietary requirements..." value={formData.dietaryRestrictions} onChange={e => setFormData({
-                  ...formData,
-                  dietaryRestrictions: e.target.value
-                })} rows={3} className="border-2 border-black rounded-none font-mono" />
+                      {(rsvp.attendingTour || rsvp.attendingShabbat || rsvp.attendingPoolParty || rsvp.attendingWedding) && (
+                        <div className="animate-in fade-in slide-in-from-top-4 space-y-6">
+                          <div>
+                            <Label className="font-bold font-mono text-black uppercase">
+                              Dietary Restrictions or Allergies
+                            </Label>
+                            <Textarea placeholder={`Any dietary requirements for ${rsvp.guestName.split(' ')[0]}...`} value={rsvp.dietaryRestrictions} onChange={e => updateRsvp(index, 'dietaryRestrictions', e.target.value)} rows={2} className="border-2 border-black rounded-none font-mono bg-white mt-1" />
+                          </div>
+                        </div>
+                      )}
+
+                      <div>
+                        <Label className="font-bold font-mono text-black uppercase">Additional Notes (Optional)</Label>
+                        <Textarea placeholder="Any special requests or messages..." value={rsvp.additionalNotes} onChange={e => updateRsvp(index, 'additionalNotes', e.target.value)} rows={2} className="border-2 border-black rounded-none font-mono bg-white mt-1" />
+                      </div>
                     </div>
                   </div>
-                )}
-
-                <div>
-                  <Label htmlFor="additionalNotes" className="font-bold font-mono text-black uppercase">Additional Notes (Optional)</Label>
-                  <Textarea id="additionalNotes" placeholder="Any special requests or messages for us..." value={formData.additionalNotes} onChange={e => setFormData({
-                ...formData,
-                additionalNotes: e.target.value
-              })} rows={3} className="border-2 border-black rounded-none font-mono" />
-                </div>
+                ))}
 
                 <div className="flex gap-3 pt-4">
                   <Button type="button" variant="outline" onClick={() => setShowForm(false)} className="flex-1 border-2 border-black rounded-none font-bold font-mono uppercase hover:bg-gray-100">
                     Back
                   </Button>
                   <Button type="submit" disabled={loading} className="flex-1 bg-purple-500 text-black border-2 border-black rounded-none shadow-[4px_4px_0_0_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0_0_rgba(0,0,0,1)] transition-all font-bold font-mono uppercase">
-                    {loading ? 'Submitting...' : (formData.id ? 'Update RSVP' : 'Submit RSVP')}
+                    {loading ? 'Submitting...' : (rsvps.some(r => r.id) ? 'Update RSVPs' : 'Submit RSVPs')}
                   </Button>
                 </div>
               </div>
