@@ -40,7 +40,7 @@ const WeddingDetails = () => {
     date: "Saturday, Jan 16, 2027",
     events: [{
       title: "Pool Party",
-      time: "2:00 PM",
+      time: "1:00 PM",
       location: "Hilton Pool",
       description: "The Hilton has an artificial body of water 30 ft from a natural body of water, you'll have to see it to believe it",
       icon: Sun,

@@ -336,7 +336,7 @@ const RSVP = () => {
                           {[
                             { id: 'attendingTour', label: 'Old City Tour', date: 'Friday, Jan 15 @ Morning' },
                             { id: 'attendingShabbat', label: 'Shabbat', date: 'Friday, Jan 15 @ 6:30 PM' },
-                            { id: 'attendingPoolParty', label: 'Pool Party', date: 'Saturday, Jan 16 @ 2:00 PM' },
+                            { id: 'attendingPoolParty', label: 'Pool Party', date: 'Saturday, Jan 16 @ 1:00 PM' },
                             { id: 'attendingWedding', label: 'The Wedding', date: 'Sunday, Jan 17 @ 5:30 PM' },
                           ].map((event) => (
                             <div 

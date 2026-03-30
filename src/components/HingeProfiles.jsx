@@ -63,7 +63,7 @@ const HingeProfiles = () => {
                   controls
                   poster="/images/gabriel_profile_cover image.JPG"
                 >
-                  <source src="/videos/gabriel-hinge.mp4" type="video/mp4" />
+                  <source src="/videos/gabriel_profile.mp4" type="video/mp4" />
                   Your browser does not support the video tag.
                 </video>
               </div>
