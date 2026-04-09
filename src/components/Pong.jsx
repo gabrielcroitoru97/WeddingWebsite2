@@ -1,9 +1,14 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 
 const Pong = () => {
   const canvasRef = useRef(null);
+  const [gameOver, setGameOver] = useState(false);
+  const [score, setScore] = useState(0);
+  const [gameId, setGameId] = useState(0);
 
   useEffect(() => {
+    if (gameOver) return;
+
     const canvas = canvasRef.current;
     const context = canvas.getContext('2d');
     
@@ -12,6 +17,7 @@ const Pong = () => {
     const ballRadius = 10;
     
     let animationFrameId;
+    let isGameOver = false;
 
     const player = {
       x: 10,
@@ -19,14 +25,6 @@ const Pong = () => {
       width: paddleWidth,
       height: paddleHeight,
       dy: 6,
-      score: 0
-    };
-
-    const computer = {
-      x: canvas.width - 20,
-      y: canvas.height / 2 - paddleHeight / 2,
-      width: paddleWidth,
-      height: paddleHeight,
       score: 0
     };
 
@@ -79,22 +77,12 @@ const Pong = () => {
       context.fillText(text, x, y);
     };
 
-    const resetBall = () => {
-      ball.x = canvas.width / 2;
-      ball.y = canvas.height / 2;
-      ball.speed = 5;
-      ball.dx = -ball.dx;
-    };
-
     const update = () => {
       if (upPressed && player.y > 0) {
         player.y -= player.dy;
       } else if (downPressed && player.y < canvas.height - player.height) {
         player.y += player.dy;
       }
-
-      // Computer simple AI
-      computer.y += ((ball.y - (computer.y + computer.height / 2))) * 0.08;
 
       ball.x += ball.dx;
       ball.y += ball.dy;
@@ -104,32 +92,38 @@ const Pong = () => {
         ball.dy = -ball.dy;
       }
 
-      let paddle = (ball.x < canvas.width / 2) ? player : computer;
-
-      // Paddle collision
-      if (ball.x + ball.radius > paddle.x && ball.x - ball.radius < paddle.x + paddle.width &&
-          ball.y + ball.radius > paddle.y && ball.y - ball.radius < paddle.y + paddle.height) {
-        
-        let collidePoint = (ball.y - (paddle.y + paddle.height / 2));
-        collidePoint = collidePoint / (paddle.height / 2);
-        
-        let angleRad = (Math.PI / 4) * collidePoint;
-        let direction = (ball.x < canvas.width / 2) ? 1 : -1;
-        
-        ball.dx = direction * ball.speed * Math.cos(angleRad);
-        ball.dy = ball.speed * Math.sin(angleRad);
-        
-        // Slightly speed up the ball after a hit to make it interesting
-        ball.speed += 0.5;
+      // Wall collision (right wall)
+      if (ball.x + ball.radius > canvas.width) {
+        ball.x = canvas.width - ball.radius; // Prevent ball from getting stuck
+        ball.dx = -ball.dx;
       }
 
-      // Scoring
+      // Paddle collision
+      if (ball.x - ball.radius < player.x + player.width &&
+          ball.x + ball.radius > player.x &&
+          ball.y + ball.radius > player.y && 
+          ball.y - ball.radius < player.y + player.height) {
+        
+        if (ball.dx < 0) { // Only count hit if the ball is approaching from the right
+          let collidePoint = (ball.y - (player.y + player.height / 2));
+          collidePoint = collidePoint / (player.height / 2);
+          
+          let angleRad = (Math.PI / 4) * collidePoint;
+          
+          ball.dx = ball.speed * Math.cos(angleRad); // Bounce right towards wall
+          ball.dy = ball.speed * Math.sin(angleRad);
+          
+          // Speed up the ball slightly to increase difficulty
+          ball.speed += 0.5;
+          player.score++; // Increment streak
+        }
+      }
+
+      // Missed the ball (left wall)
       if (ball.x - ball.radius < 0) {
-        computer.score++;
-        resetBall();
-      } else if (ball.x + ball.radius > canvas.width) {
-        player.score++;
-        resetBall();
+        isGameOver = true;
+        setScore(player.score);
+        setGameOver(true);
       }
     };
 
@@ -137,27 +131,28 @@ const Pong = () => {
       // Background
       drawRect(0, 0, canvas.width, canvas.height, '#111827');
 
-      // Draw net
-      for (let i = 0; i <= canvas.height; i += 20) {
-        drawRect(canvas.width / 2 - 2, i, 4, 10, '#f9a8d4'); 
-      }
+      // Draw right wall indicator
+      drawRect(canvas.width - 10, 0, 10, canvas.height, '#f9a8d4');
 
-      // Draw scores
-      drawText(player.score, canvas.width / 4, 60, '#67e8f9');
-      drawText(computer.score, 3 * canvas.width / 4, 60, '#67e8f9');
+      // Draw streak score
+      context.textAlign = 'center';
+      drawText(`Streak: ${player.score}`, canvas.width / 2, 60, '#67e8f9');
+      context.textAlign = 'left'; // Reset back to default
 
-      // Draw paddles
+      // Draw player paddle
       drawRect(player.x, player.y, player.width, player.height, '#fde047');
-      drawRect(computer.x, computer.y, computer.width, computer.height, '#fde047');
 
       // Draw ball
       drawCircle(ball.x, ball.y, ball.radius, '#ffffff');
     };
 
     const gameLoop = () => {
+      if (isGameOver) return;
       update();
-      render();
-      animationFrameId = window.requestAnimationFrame(gameLoop);
+      if (!isGameOver) {
+        render();
+        animationFrameId = window.requestAnimationFrame(gameLoop);
+      }
     };
 
     gameLoop();
@@ -167,7 +162,7 @@ const Pong = () => {
       document.removeEventListener('keydown', keyDownHandler);
       document.removeEventListener('keyup', keyUpHandler);
     };
-  }, []);
+  }, [gameId, gameOver]);
 
   return (
     <div className="pt-28 pb-12 min-h-screen bg-pink-100 flex flex-col items-center">
@@ -177,7 +172,26 @@ const Pong = () => {
       <p className="mb-8 font-bold text-lg border-2 border-black bg-white px-4 py-2 shadow-[4px_4px_0_0_rgba(0,0,0,1)]">
         Use <span className="text-pink-600">Arrow Up</span> and <span className="text-pink-600">Arrow Down</span> to play!
       </p>
-      <div className="border-4 border-black shadow-[8px_8px_0_0_rgba(0,0,0,1)] bg-black p-2 rounded-none">
+      <div className="relative border-4 border-black shadow-[8px_8px_0_0_rgba(0,0,0,1)] bg-black p-2 rounded-none">
+        {gameOver && (
+          <div className="absolute inset-0 z-10 bg-black/80 flex flex-col items-center justify-center">
+            <h2 className="text-6xl text-pink-400 font-black tracking-tighter mb-4" style={{ fontFamily: 'Righteous' }}>
+              GAME OVER
+            </h2>
+            <p className="text-3xl text-white font-bold mb-8">
+              Final Score: {score}
+            </p>
+            <button 
+              onClick={() => {
+                setGameOver(false);
+                setGameId(prev => prev + 1);
+              }}
+              className="px-6 py-3 bg-yellow-300 text-black border-4 border-black font-bold uppercase text-xl shadow-[4px_4px_0_0_rgba(0,0,0,1)] hover:translate-x-1 hover:-translate-y-1 hover:shadow-[6px_6px_0_0_rgba(0,0,0,1)] active:translate-x-0 active:translate-y-0 active:shadow-none transition-all"
+            >
+              Play Again
+            </button>
+          </div>
+        )}
         <canvas 
           ref={canvasRef} 
           width={800} 
