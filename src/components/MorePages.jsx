@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Music, BookOpen, Smile, Baby } from 'lucide-react';
+import { Music, Smile, Baby } from 'lucide-react';
 
 export const FutureKidsPage = () => (
   <section className="py-24 bg-pink-200 min-h-screen relative overflow-hidden">
@@ -135,81 +135,3 @@ export const MarcoPage = () => {
     </div>
   );
 };
-
-export const CartagenaPage = () => (
-  <section className="py-24 bg-teal-200 min-h-screen relative overflow-hidden">
-    <div className="absolute inset-0 opacity-10" 
-         style={{ 
-           backgroundImage: 'linear-gradient(#000 2px, transparent 2px), linear-gradient(90deg, #000 2px, transparent 2px)',
-           backgroundSize: '40px 40px'
-         }} 
-    />
-    <div className="container mx-auto px-4 relative z-10">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="text-center mb-12"
-      >
-        <div className="inline-block bg-white border-4 border-black px-8 py-4 shadow-[8px_8px_0_0_#000] transform -rotate-1">
-          <div className="flex items-center justify-center gap-3">
-            <BookOpen className="w-8 h-8 text-black" />
-            <h2 className="text-3xl md:text-5xl font-black uppercase tracking-tighter">
-              History of Cartagena
-            </h2>
-          </div>
-        </div>
-      </motion.div>
-      <div className="bg-white border-4 border-black p-8 md:p-12 shadow-[12px_12px_0_0_rgba(0,0,0,1)] max-w-5xl mx-auto mb-12">
-        <div className="space-y-6 text-black font-mono text-lg leading-relaxed">
-          <p>
-            <strong>Cartagena de Indias</strong>, founded in 1533 by Spanish conquistador Pedro de Heredia, 
-            is one of South America's most historically significant cities. Named after Cartagena, Spain, the 
-            city quickly became a major port and trading hub in the Spanish colonial empire.
-          </p>
-          <p>
-            The city's strategic location on the Caribbean coast made it a target for pirates and foreign 
-            powers. To protect the wealth flowing through the port, the Spanish built an extensive system of 
-            fortifications, including the famous <strong>Castillo San Felipe de Barajas</strong>, one of the 
-            greatest military constructions of Spanish colonial times.
-          </p>
-          <p>
-            The old city walls, completed in 1796, stretch for 13 kilometers and represent one of the most 
-            complete fortification systems in South America. Today, these walls are a UNESCO World Heritage 
-            site and a favorite spot for sunset walks.
-          </p>
-          <p>
-            Cartagena's <strong>Historic Center</strong> is a living museum of colonial architecture, with 
-            colorful buildings, flower-draped balconies, and cobblestone streets that transport visitors back 
-            in time. The city has been meticulously preserved and is now one of the Caribbean's most beautiful 
-            and romantic destinations.
-          </p>
-          <p>
-            The city played a crucial role in Colombia's independence movement and was one of the first cities 
-            to declare independence from Spain in 1811. Today, Cartagena seamlessly blends its rich history 
-            with modern Colombian culture, making it the perfect setting for a wedding celebration!
-          </p>
-        </div>
-      </div>
-      <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-        <div className="border-4 border-black shadow-[8px_8px_0_0_rgba(0,0,0,1)] bg-white hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[4px_4px_0_0_rgba(0,0,0,1)] transition-all">
-          <img 
-            alt="Historic Cartagena city walls at sunset"
-            className="w-full h-full object-cover aspect-[4/3]"
-           src="https://images.unsplash.com/photo-1686929405131-eb30a78c0d72" />
-        </div>
-        <div className="border-4 border-black shadow-[8px_8px_0_0_rgba(0,0,0,1)] bg-white hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[4px_4px_0_0_rgba(0,0,0,1)] transition-all">
-          <img 
-            alt="Colorful colonial buildings in Cartagena"
-            className="w-full h-full object-cover aspect-[4/3]"
-           src="https://images.unsplash.com/photo-1576541453633-b1e3e9b6b72e" />
-        </div>
-        <div className="border-4 border-black shadow-[8px_8px_0_0_rgba(0,0,0,1)] bg-white hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[4px_4px_0_0_rgba(0,0,0,1)] transition-all">
-          <img 
-            alt="Castillo San Felipe de Barajas fortress"
-            className="w-full h-full object-cover aspect-[4/3]"
-           src="https://images.unsplash.com/photo-1544056746-9e4f9534c363" />
-        </div>
-      </div>
-    </div>
-  </section>
-);

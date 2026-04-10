@@ -33,7 +33,6 @@ const Header = () => {
   const moreLinks = [
     { label: "Gabe's Favorite Joke", path: '/more/joke' },
     { label: 'Marco', path: '/more/marco' },
-    { label: 'History of Cartagena', path: '/more/cartagena' },
     { label: 'See Our Future Kids', path: '/more/future-kids' },
     { label: 'Pong Game', path: '/more/pong' },
   ];

@@ -13,7 +13,7 @@ import HingeProfiles from '@/components/HingeProfiles';
 import SingleGuests from '@/components/SingleGuests';
 import FAQ from '@/components/FAQ';
 import Pong from '@/components/Pong';
-import { JokePage, MarcoPage, CartagenaPage, FutureKidsPage } from '@/components/MorePages';
+import { JokePage, MarcoPage, FutureKidsPage } from '@/components/MorePages';
 import { Toaster } from '@/components/ui/toaster';
 
 function App() {
@@ -39,7 +39,6 @@ function App() {
             <Route path="/faq" element={<FAQ />} />
             <Route path="/more/joke" element={<JokePage />} />
             <Route path="/more/marco" element={<MarcoPage />} />
-            <Route path="/more/cartagena" element={<CartagenaPage />} />
             <Route path="/more/future-kids" element={<FutureKidsPage />} />
             <Route path="/more/pong" element={<Pong />} />
           </Routes>
