@@ -1,10 +1,47 @@
 import React, { useRef, useEffect, useState } from 'react';
+import { supabase } from '@/lib/customSupabaseClient.js';
 
 const Pong = () => {
   const canvasRef = useRef(null);
   const [gameOver, setGameOver] = useState(false);
   const [score, setScore] = useState(0);
   const [gameId, setGameId] = useState(0);
+  
+  // Leaderboard states
+  const [postGameState, setPostGameState] = useState('ask'); // 'ask', 'select', 'leaderboard'
+  const [selectedName, setSelectedName] = useState('');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [leaderboard, setLeaderboard] = useState([]);
+  const [guestList, setGuestList] = useState([]);
+
+  // Keep game loop from running when typing/interacting with overlays
+  const isOverlayActive = gameOver;
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        // Fetch guest list
+        const { data: guestsData, error: guestsError } = await supabase.from('guests').select('name');
+        if (!guestsError && guestsData) {
+          const names = guestsData.map(guest => guest.name).filter(Boolean).sort();
+          setGuestList(names);
+        }
+        
+        // Fetch top 5 global leaderboard
+        const { data: scoresData, error: scoresError } = await supabase
+          .from('pong_scores')
+          .select('name, score')
+          .order('score', { ascending: false })
+          .limit(5);
+        if (!scoresError && scoresData) {
+          setLeaderboard(scoresData);
+        }
+      } catch (err) {
+        console.error('Error fetching data:', err);
+      }
+    };
+    fetchData();
+  }, []);
 
   useEffect(() => {
     if (gameOver) return;
@@ -45,7 +82,7 @@ const Pong = () => {
       else if(e.key === 'ArrowDown') downPressed = true;
       
       // Prevent scrolling the page when playing with arrow keys
-      if(['ArrowUp', 'ArrowDown', ' '].includes(e.key)) {
+      if(['ArrowUp', 'ArrowDown', ' '].includes(e.key) && !isOverlayActive) {
         e.preventDefault();
       }
     };
@@ -164,6 +201,34 @@ const Pong = () => {
     };
   }, [gameId, gameOver]);
 
+  const saveScore = async () => {
+    if (!selectedName) return;
+    
+    try {
+      // Insert the new score into Supabase
+      const { error: insertError } = await supabase
+        .from('pong_scores')
+        .insert([{ name: selectedName, score: score }]);
+        
+      if (insertError) throw insertError;
+
+      // Fetch the updated top 5 leaderboard globally
+      const { data, error: fetchError } = await supabase
+        .from('pong_scores')
+        .select('name, score')
+        .order('score', { ascending: false })
+        .limit(5);
+
+      if (!fetchError && data) {
+        setLeaderboard(data);
+      }
+    } catch (err) {
+      console.error('Error saving score:', err);
+    }
+    
+    setPostGameState('leaderboard');
+  };
+
   return (
     <div className="pt-28 pb-12 min-h-screen bg-pink-100 flex flex-col items-center">
       <h1 className="text-4xl font-black tracking-tighter text-black uppercase mb-4" style={{ fontFamily: 'Righteous' }}>
@@ -174,22 +239,110 @@ const Pong = () => {
       </p>
       <div className="relative border-4 border-black shadow-[8px_8px_0_0_rgba(0,0,0,1)] bg-black p-2 rounded-none">
         {gameOver && (
-          <div className="absolute inset-0 z-10 bg-black/80 flex flex-col items-center justify-center">
-            <h2 className="text-6xl text-pink-400 font-black tracking-tighter mb-4" style={{ fontFamily: 'Righteous' }}>
+          <div className="absolute inset-0 z-10 bg-black/90 flex flex-col items-center justify-center p-4 text-center">
+            <h2 className="text-6xl text-pink-400 font-black tracking-tighter mb-2" style={{ fontFamily: 'Righteous' }}>
               GAME OVER
             </h2>
-            <p className="text-3xl text-white font-bold mb-8">
+            <p className="text-3xl text-white font-bold mb-6">
               Final Score: {score}
             </p>
-            <button 
-              onClick={() => {
-                setGameOver(false);
-                setGameId(prev => prev + 1);
-              }}
-              className="px-6 py-3 bg-yellow-300 text-black border-4 border-black font-bold uppercase text-xl shadow-[4px_4px_0_0_rgba(0,0,0,1)] hover:translate-x-1 hover:-translate-y-1 hover:shadow-[6px_6px_0_0_rgba(0,0,0,1)] active:translate-x-0 active:translate-y-0 active:shadow-none transition-all"
-            >
-              Play Again
-            </button>
+            
+            {postGameState === 'ask' && (
+              <div className="space-y-4">
+                <p className="text-xl text-yellow-300 font-bold mb-4">Add your score to the leaderboard?</p>
+                <div className="flex gap-4 justify-center">
+                  <button 
+                    onClick={() => setPostGameState('select')}
+                    className="px-6 py-2 bg-green-400 text-black border-4 border-black font-bold uppercase text-xl shadow-[4px_4px_0_0_rgba(0,0,0,1)] hover:translate-x-1 hover:-translate-y-1 hover:shadow-[6px_6px_0_0_rgba(0,0,0,1)] transition-all"
+                  >
+                    Yes
+                  </button>
+                  <button 
+                    onClick={() => setPostGameState('leaderboard')}
+                    className="px-6 py-2 bg-red-400 text-black border-4 border-black font-bold uppercase text-xl shadow-[4px_4px_0_0_rgba(0,0,0,1)] hover:translate-x-1 hover:-translate-y-1 hover:shadow-[6px_6px_0_0_rgba(0,0,0,1)] transition-all"
+                  >
+                    No
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {postGameState === 'select' && (
+              <div className="space-y-4 flex flex-col items-center w-full max-w-sm">
+                <p className="text-xl text-yellow-300 font-bold">Search for your name:</p>
+                <div className="w-full relative">
+                  <input 
+                    type="text"
+                    placeholder="Start typing..."
+                    value={searchTerm}
+                    onChange={(e) => {
+                      setSearchTerm(e.target.value);
+                      setSelectedName(''); // Clear selected name when typing
+                    }}
+                    className="w-full px-4 py-2 border-4 border-black font-bold text-lg text-black focus:outline-none focus:ring-4 focus:ring-cyan-300"
+                  />
+                  {searchTerm && !selectedName && (
+                    <div className="absolute z-20 w-full mt-1 max-h-40 overflow-y-auto bg-white border-4 border-black shadow-[4px_4px_0_0_rgba(0,0,0,1)] text-black">
+                      {guestList.filter(name => name.toLowerCase().includes(searchTerm.toLowerCase())).length > 0 ? (
+                        guestList.filter(name => name.toLowerCase().includes(searchTerm.toLowerCase())).map(name => (
+                          <div 
+                            key={name} 
+                            className="px-4 py-2 hover:bg-cyan-200 cursor-pointer font-bold border-b-2 border-gray-200 last:border-0 text-left"
+                            onClick={() => {
+                              setSelectedName(name);
+                              setSearchTerm(name); // Fill input with selected name
+                            }}
+                          >
+                            {name}
+                          </div>
+                        ))
+                      ) : (
+                        <div className="px-4 py-2 text-gray-500 font-bold text-left">No matches found</div>
+                      )}
+                    </div>
+                  )}
+                </div>
+                <button 
+                  onClick={saveScore}
+                  disabled={!selectedName}
+                  className="px-6 py-2 bg-cyan-400 text-black border-4 border-black font-bold uppercase text-xl shadow-[4px_4px_0_0_rgba(0,0,0,1)] hover:translate-x-1 hover:-translate-y-1 hover:shadow-[6px_6px_0_0_rgba(0,0,0,1)] disabled:opacity-50 disabled:hover:translate-x-0 disabled:hover:translate-y-0 disabled:hover:shadow-none transition-all"
+                >
+                  Submit Score
+                </button>
+              </div>
+            )}
+
+            {postGameState === 'leaderboard' && (
+              <div className="flex flex-col items-center w-full max-w-sm">
+                <h3 className="text-2xl text-yellow-300 font-black mb-4 uppercase">Top 5 Scores</h3>
+                <div className="w-full bg-white border-4 border-black p-4 mb-6">
+                  {leaderboard.length === 0 ? (
+                    <p className="text-black font-bold text-center">No scores yet!</p>
+                  ) : (
+                    <ul className="space-y-2 text-left">
+                      {leaderboard.map((entry, idx) => (
+                        <li key={idx} className="flex justify-between font-bold text-black border-b-2 border-gray-200 last:border-0 pb-1">
+                          <span>{idx + 1}. {entry.name}</span>
+                          <span>{entry.score}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+                <button 
+                  onClick={() => {
+                    setGameOver(false);
+                    setPostGameState('ask');
+                    setSelectedName('');
+                    setSearchTerm('');
+                    setGameId(prev => prev + 1);
+                  }}
+                  className="px-6 py-3 bg-yellow-300 text-black border-4 border-black font-bold uppercase text-xl shadow-[4px_4px_0_0_rgba(0,0,0,1)] hover:translate-x-1 hover:-translate-y-1 hover:shadow-[6px_6px_0_0_rgba(0,0,0,1)] active:translate-x-0 active:translate-y-0 active:shadow-none transition-all"
+                >
+                  Play Again
+                </button>
+              </div>
+            )}
           </div>
         )}
         <canvas 
