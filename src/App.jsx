@@ -64,8 +64,8 @@ function App() {
   return (
     <Router>
       <Helmet>
-        <title>Gabriel & Sasha's 90s Wedding Bash</title>
-        <meta name="description" content="Get ready to party like it's 1999! Join Gabriel and Sasha in Cartagena." />
+        <title>Gabriel & Sasha's Wedding</title>
+        <meta name="description" content="Join Gabriel and Sasha in Cartagena." />
       </Helmet>
       <ScrollToTop />
       <div className="min-h-screen">
