@@ -25,7 +25,7 @@ function App() {
 
   const handleLogin = (e) => {
     e.preventDefault();
-    if (passwordInput === 'password') {
+    if (passwordInput === 'Cartagena2027') {
       localStorage.setItem('siteAuth', 'true');
       setIsAuthenticated(true);
     } else {
