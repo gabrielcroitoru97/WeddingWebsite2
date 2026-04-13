@@ -15,10 +15,9 @@ const WeddingDetails = () => {
       dressCode: "Casual, wear walking shoes"
     }, {
       title: "Shabbat",
-      time: "6:30 PM",
       icon: Wine,
       color: "bg-indigo-200",
-      dressCode: "Dressy casual (think tropical: sundresses, linen shirts, short sleeve button downs, etc)",
+      dressCode: "Dressy casual (think tropical: sundresses, linen shirts, guayaberas, short sleeve button downs, etc)",
       subEvents: [{
         title: "Kabbalat Shabbat",
         time: "5:45 PM",
@@ -145,10 +144,12 @@ const WeddingDetails = () => {
                           <h3 className="text-2xl font-black uppercase tracking-tight">
                             {event.title}
                           </h3>
-                          <div className="flex items-center gap-2 bg-black text-white px-3 py-1 font-mono font-bold text-sm">
-                            <Clock className="w-4 h-4" />
-                            {event.time}
-                          </div>
+                          {event.time && (
+                            <div className="flex items-center gap-2 bg-black text-white px-3 py-1 font-mono font-bold text-sm">
+                              <Clock className="w-4 h-4" />
+                              {event.time}
+                            </div>
+                          )}
                         </div>
 
                         {event.location && (

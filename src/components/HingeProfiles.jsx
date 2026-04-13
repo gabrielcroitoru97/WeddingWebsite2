@@ -42,6 +42,9 @@ const HingeProfiles = () => {
               <p>
                 You think Hinge is a useless app that never works? Well here is one example of it paying off and getting a good result. Then again, between the two of us we went on dozens of bad Hinge dates before finding each other so the success rate isn't all that great.
               </p>
+              <p>
+                For those of you that haven't had to date in the past 10 years: Hinge is an app that lets you see other single people in your area. If you see someone you like, you send them a 'like' and they can choose to match with you and start a chat. Below are Gabriel and Sasha's profiles from the app and the initial conversation.
+              </p>
             </div>
           </motion.div>
 

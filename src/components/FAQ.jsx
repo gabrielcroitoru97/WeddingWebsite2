@@ -8,7 +8,7 @@ const FAQ = () => {
       question: "What should I wear to these events?",
       answer: (
         <div className="space-y-2">
-          <p><strong>Shabbat:</strong> Dressy Casual (sundresses, linen shirts, pants, socks, shoes)</p>
+          <p><strong>Shabbat:</strong> Dressy casual (think tropical: sundresses, linen shirts, guayaberas, socks, shoes, etc.)</p>
           <p><strong>Pool party:</strong> pool attire (bathing suits, goggles, water wings, wetsuits).</p>
           <p><strong>Wedding:</strong> cocktail/semi-formal attire (any suit, any length dresses).</p>
         </div>
@@ -96,16 +96,16 @@ const FAQ = () => {
       answer: "The Tisch will be an opportunity for the friends and family of the couple to toast to their marriage. Only family will be giving speeches at the Shabbat and Wedding, so this is your chance to say a few words in honor of the couple. If speaking isn’t your style, songs, dances and slam poetry are also accepted. Anyone who wants to join is welcome to, but this event is mostly geared towards the younger crowd."
     },
     {
-      question: "Can I bring my kids?",
-      answer: "Yes, but if you want them to get put up in the chair during the hora, you need to bring your own car seat."
-    },
-    {
       question: "What if Sasha or Gabriel say no under the Chupah?",
       answer: "If this happens then the crowd will get robbed of an awesome glass smashing moment."
     },
     {
       question: "How come you didn’t get married at the Bad Bunny halftime show?",
       answer: "The smashed glass would’ve been a hazard for the players in the second half."
+    },
+    {
+      question: "Will there be a time during the ceremony for me to object to this marriage?",
+      answer: "No, but if you would like to lodge an objection, please send it in writing and they will be considered in the order in which they arrive"
     }
   ];
 
