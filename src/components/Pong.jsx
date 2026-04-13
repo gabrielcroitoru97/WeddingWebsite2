@@ -95,6 +95,21 @@ const Pong = () => {
     document.addEventListener('keydown', keyDownHandler);
     document.addEventListener('keyup', keyUpHandler);
 
+    const touchHandler = (e) => {
+      e.preventDefault(); // Prevents the screen from scrolling when playing
+      const rect = canvas.getBoundingClientRect();
+      const touch = e.touches[0];
+      const scaleY = canvas.height / rect.height;
+      const y = (touch.clientY - rect.top) * scaleY;
+      
+      player.y = y - player.height / 2;
+      
+      if (player.y < 0) player.y = 0;
+      if (player.y + player.height > canvas.height) player.y = canvas.height - player.height;
+    };
+    canvas.addEventListener('touchstart', touchHandler, { passive: false });
+    canvas.addEventListener('touchmove', touchHandler, { passive: false });
+
     const drawRect = (x, y, w, h, color) => {
       context.fillStyle = color;
       context.fillRect(x, y, w, h);
@@ -198,6 +213,8 @@ const Pong = () => {
       window.cancelAnimationFrame(animationFrameId);
       document.removeEventListener('keydown', keyDownHandler);
       document.removeEventListener('keyup', keyUpHandler);
+      canvas.removeEventListener('touchstart', touchHandler);
+      canvas.removeEventListener('touchmove', touchHandler);
     };
   }, [gameId, gameOver]);
 
@@ -235,7 +252,7 @@ const Pong = () => {
         Pong
       </h1>
       <p className="mb-8 font-bold text-lg border-2 border-black bg-white px-4 py-2 shadow-[4px_4px_0_0_rgba(0,0,0,1)]">
-        Use <span className="text-pink-600">Arrow Up</span> and <span className="text-pink-600">Arrow Down</span> to play!
+        Use <span className="text-pink-600">Arrow Up</span> and <span className="text-pink-600">Arrow Down</span> (or drag on the screen) to play!
       </p>
       <div className="relative border-4 border-black shadow-[8px_8px_0_0_rgba(0,0,0,1)] bg-black p-2 rounded-none">
         {gameOver && (
@@ -350,6 +367,7 @@ const Pong = () => {
           width={800} 
           height={500} 
           className="bg-gray-900 block max-w-full"
+          style={{ touchAction: 'none' }}
         />
       </div>
     </div>
