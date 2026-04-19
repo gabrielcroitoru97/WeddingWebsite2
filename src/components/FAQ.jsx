@@ -78,7 +78,7 @@ const FAQ = () => {
       answer: (
         <div className="space-y-2">
           <p>Typical to the Colombian coast are mojarra frita, pargo frito (both whole fried fish), arroz de coco, and arepa de huevo.</p>
-          <p>Typical to Colombia but not necessarily the coast are sancocho, bandeja paisa, empanadas, ajiaco, and arepas (which are Colombian, don’t let any Venezuelan tell you otherwise). Typical baked goods are pan de bono, buñuelos, pan de yuca, and pan de queso.</p>
+          <p>Typical to Colombia but not necessarily the coast are sancocho, bandeja paisa, empanadas, ajiaco, and arepas (which are Colombian, don’t let any Venezuelan tell you otherwise). Typical baked goods are pandebono, buñuelos, pandeyuca, and pan de queso.</p>
           <p>We also have the best coffee in the world and great fruit juices.</p>
         </div>
       )
