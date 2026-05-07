@@ -63,7 +63,7 @@ const FAQ = () => {
     },
     {
       question: "What happens if I need legal advice at the wedding?",
-      answer: "Feel free to ask one of the 10+ lawyers that will be at the wedding?"
+      answer: "Feel free to ask one of the 10+ lawyers that will be at the wedding."
     },
     {
       question: "What airline should I fly to Cartagena?",
@@ -94,7 +94,7 @@ const FAQ = () => {
     },
     {
       question: "What did the buffalo say to his son when he went to college?",
-      answer: "Bison"
+      answer: "Bison."
     },
     {
       question: "What’s a Tisch?",

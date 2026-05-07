@@ -27,7 +27,7 @@ const Registry = () => {
         </motion.div>
 
         <div className="max-w-3xl mx-auto mb-16">
-          {/* Store Registry */}
+          {/* Combined Registry Box */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -38,14 +38,29 @@ const Registry = () => {
             <div className="bg-pink-100 p-4 rounded-full border-2 border-black mb-6">
               <Gift className="w-12 h-12 text-pink-600" />
             </div>
-            <h3 className="text-2xl font-black uppercase mb-4">Gift Registry</h3>
+            <h3 className="text-2xl font-black uppercase mb-4">Gift Registries</h3>
             <div className="font-mono text-lg leading-relaxed mb-8 space-y-4">
               <p>
                 We're including our registry linked below. However, Colombia is a far trip and coming to celebrate with us is very generous and more than enough of a gift (we mean it, no pressure or expectation to get us anything else).
               </p>
             </div>
-            <div className="block w-full bg-gray-200 text-gray-600 font-bold font-mono py-3 border-2 border-black shadow-[4px_4px_0_0_#000] uppercase cursor-not-allowed">
-              Registry coming soon
+            <div className="w-full flex flex-col sm:flex-row gap-4">
+              <a 
+                href="https://www.zola.com/registry/gabrielandsasha2027/?preview=true"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex-1 bg-pink-400 text-black font-bold font-mono py-3 border-2 border-black shadow-[4px_4px_0_0_#000] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0_0_#000] hover:bg-pink-300 transition-all uppercase flex items-center justify-center"
+              >
+                Zola Registry
+              </a>
+          <a 
+            href="https://www.crateandbarrel.com/gift-registry/sasha-becker-and-gabriel-croitoru/r7537829"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex-1 bg-cyan-400 text-black font-bold font-mono py-3 border-2 border-black shadow-[4px_4px_0_0_#000] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0_0_#000] hover:bg-cyan-300 transition-all uppercase flex items-center justify-center"
+          >
+            Crate & Barrel
+          </a>
             </div>
           </motion.div>
         </div>
