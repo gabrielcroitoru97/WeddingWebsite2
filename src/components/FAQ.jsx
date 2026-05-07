@@ -67,7 +67,12 @@ const FAQ = () => {
     },
     {
       question: "What airline should I fly to Cartagena?",
-      answer: "The official airline for Gabriel and Sasha’s wedding is Spirit Airlines. Spirit: they’ll get you there in one piece and that’s about it."
+      answer: (
+        <div className="space-y-2">
+          <p>The official airline for Gabriel and Sasha’s wedding is Spirit Airlines. Spirit: they’ll get you there in one piece and that’s about it.</p>
+          <p>Note: this FAQ was written before the tragic closure of Spirit Airlines. We decided to keep in memory of the cheap fares that we've lost.</p>
+        </div>
+      )
     },
     {
       question: "What’s Gabriel’s favorite animal?",
@@ -85,7 +90,7 @@ const FAQ = () => {
     },
     {
       question: "Where can I connect through to get to Cartagena?",
-      answer: "Spirit has direct flights from Fort Lauderdale to Cartagena. Lesser airlines also fly there from NYC, Atlanta, Panama, Miami, Bogota, and Fort Lauderdale."
+      answer: "Various airlines fly there from NYC, Atlanta, Panama, Miami, Bogota, and Fort Lauderdale."
     },
     {
       question: "What did the buffalo say to his son when he went to college?",
