@@ -59,9 +59,10 @@ const Travel = () => {
             <h3 className="text-2xl font-black uppercase text-black mb-4">Where to Stay</h3>
             <div className="space-y-3 text-black font-mono text-lg">
               <p><strong>Hotel Block:</strong> Hilton Hotel</p>
-              <p><strong>Booking Link:</strong> <a href="https://www.hilton.com/en/attend-my-event/ctghihh-gubjsg-858f4144-590b-409d-978c-d1bdc2ca4d8/" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">Room Block</a></p>
-              <p><strong>Booking Code:</strong> GUBJSG</p>
+              <p><strong>Booking Link:</strong> Pending</p>
+              <p><strong>Booking Code:</strong> Pending</p>
               <p><strong>Special Rate:</strong> Available until December 15th, 2026</p>
+              <p><strong>Note: We discovered an error in the booking link, we're trying to get it fixed as soon as possible. Please hold off on booking your rooms as we want to make sure that everyone gets the best rate possible.</strong></p>
               <div className="text-sm text-black italic mt-4 border-t-2 border-black pt-2 space-y-2">
                 <p>We recommend staying at the Hilton because all of our celebrations will be held on-site. This comes with the added benefit of having all of our favorite people under one roof to make the weekend truly special!</p>
                 <p>We also highly recommend using the room block to book as this will provide you the best rate. Using the link above avoids a 19% tax that is applied at check-in if you book independently through the Hilton or other 3rd party sites.</p>
