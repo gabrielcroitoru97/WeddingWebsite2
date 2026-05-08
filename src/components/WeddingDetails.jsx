@@ -19,13 +19,18 @@ const WeddingDetails = () => {
       color: "bg-indigo-200",
       dressCode: "Dressy casual (think tropical: sundresses, linen shirts, guayaberas, short sleeve button downs, etc)",
       subEvents: [{
-        title: "Kabbalat Shabbat",
+        title: "Candle Lighting",
         time: "5:45 PM",
         location: "The Beach",
-        description: "Optional Shabbat services at the beach led by Joey Becker. Afterwords, we'll continue with a full ma'ariv indoors."
+        description: "For anyone interested, join us to light shabbat candles on the beach."
+      }, {
+        title: "Kabbalat Shabbat and Maariv Services",
+        time: "6:00 PM",
+        location: "TBD",
+        description: "Optional services led by Joey Becker."
       }, {
         title: "Shabbat Dinner",
-        time: "7:00 PM",
+        time: "7:30 PM",
         location: "Hilton Gardens",
         description: "18th person to show up gets to say the Hamotzi"
       }, {
