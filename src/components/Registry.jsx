@@ -46,7 +46,7 @@ const Registry = () => {
             </div>
             <div className="w-full flex flex-col sm:flex-row gap-4">
               <a 
-                href="https://www.zola.com/registry/gabrielandsasha2027/?preview=true"
+                href="https://www.zola.com/registry/gabrielandsasha2027"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex-1 bg-pink-400 text-black font-bold font-mono py-3 border-2 border-black shadow-[4px_4px_0_0_#000] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0_0_#000] hover:bg-pink-300 transition-all uppercase flex items-center justify-center"
