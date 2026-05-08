@@ -65,7 +65,7 @@ const Travel = () => {
               <div className="text-sm text-black italic mt-4 border-t-2 border-black pt-2 space-y-2">
                 <p>We recommend staying at the Hilton because all of our celebrations will be held on-site. This comes with the added benefit of having all of our favorite people under one roof to make the weekend truly special!</p>
                 <p>We also highly recommend using the room block to book as this will provide you the best rate. Using the link above avoids a 19% tax that is applied at check-in if you book independently through the Hilton or other 3rd party sites.</p>
-                <p>Please be sure to change the dates and number of guests when you book. The default in the link is 1 guest and Jan 12 - Jan 20</p>
+                <p><strong>Please be sure to change the dates and number of guests when you book. The default in the link is 1 guest and Jan 14 - Jan 17.</strong></p>
               </div>
             </div>
           </motion.div>

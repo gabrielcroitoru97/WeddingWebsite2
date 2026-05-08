@@ -22,10 +22,10 @@ const WeddingDetails = () => {
         title: "Kabbalat Shabbat",
         time: "5:45 PM",
         location: "The Beach",
-        description: "Optional Shabbat services at the beach led by Joey Becker."
+        description: "Optional Shabbat services at the beach led by Joey Becker. Afterwords, we'll continue with a full ma'ariv indoors."
       }, {
         title: "Shabbat Dinner",
-        time: "6:30 PM",
+        time: "7:00 PM",
         location: "Hilton Gardens",
         description: "18th person to show up gets to say the Hamotzi"
       }, {
@@ -49,7 +49,7 @@ const WeddingDetails = () => {
       title: "Havdalah",
       time: "5:45 PM",
       location: "The Beach",
-      description: "An optional brief ceremony to close out Shabbat. Come see our cool twisty candle",
+      description: "An optional brief ceremony to close out Shabbat. Come see our cool, twisty candle",
       icon: Moon,
       color: "bg-indigo-300",
       dressCode: "Casual"
