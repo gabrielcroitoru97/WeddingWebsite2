@@ -36,7 +36,7 @@ const WeddingDetails = () => {
       }, {
         title: "Tisch",
         time: "Following Shabbat Dinner",
-        location: "Hilton Gardens",
+        location: "TBD",
         description: "A chance for the friends of the couple to have a few drinks and toast to the bride and groom. Of course all are welcome, but this event is really geared towards the younger crowd."
       }]
     }]
