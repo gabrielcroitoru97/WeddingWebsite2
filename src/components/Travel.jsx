@@ -62,6 +62,29 @@ const Travel = () => {
               <p><strong>Booking Link:</strong> <a href="https://www.hilton.com/en/attend-my-event/ctghihh-gubjsg-858f4144-590b-409d-978c-d1bdc2ca4d8/" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">Room Block</a></p>
               <p><strong>Booking Code:</strong> GUBJSG</p>
               <p><strong>Special Rate:</strong> Available until December 15th, 2026</p>
+              <div className="my-4 p-4 border-2 border-black bg-gray-50">
+                <p className="font-bold mb-4">Room Rates (per night):</p>
+                <div className="grid grid-cols-[auto_1fr_1fr] gap-x-2 md:gap-x-4 gap-y-3 items-center text-center">
+                  {/* Header Row */}
+                  <div className="col-start-2 col-span-2 font-bold uppercase text-xs md:text-sm tracking-wider">Number of people</div>
+                  
+                  {/* Column Headers */}
+                  <div className="col-start-2 font-bold">1 Person</div>
+                  <div className="col-start-3 font-bold">2 People</div>
+
+                  {/* Without Breakfast Row */}
+                  <div className="font-bold text-sm md:text-base text-right pr-2 leading-tight">Without<br className="md:hidden" /> Breakfast</div>
+                  <div className="border-2 border-black p-4 bg-white text-xl md:text-2xl font-black hover:bg-yellow-100 transition-colors cursor-default shadow-[2px_2px_0_0_#000]">$190</div>
+                  <div className="border-2 border-black p-4 bg-white text-xl md:text-2xl font-black hover:bg-yellow-100 transition-colors cursor-default shadow-[2px_2px_0_0_#000]">$190</div>
+
+                  {/* With Breakfast Row */}
+                  <div className="font-bold text-sm md:text-base text-right pr-2 leading-tight">With<br className="md:hidden" /> Breakfast</div>
+                  <div className="border-2 border-black p-4 bg-white text-xl md:text-2xl font-black hover:bg-blue-100 transition-colors cursor-default shadow-[2px_2px_0_0_#000]">$208</div>
+                  <div className="border-2 border-black p-4 bg-white text-xl md:text-2xl font-black hover:bg-blue-100 transition-colors cursor-default shadow-[2px_2px_0_0_#000]">$226</div>
+                </div>
+                <p className="text-sm mt-6 font-bold">Each additional person: $40 with breakfast, $22 without breakfast</p>
+                <p className="text-sm mt-2">To book a room without breakfast, please email <a href="mailto:CTGHI_RM@hilton.com" className="text-blue-600 hover:underline font-bold">CTGHI_RM@hilton.com</a>. Room with breakfast can be booked directly through the link.</p>
+              </div>
               <div className="text-sm text-black italic mt-4 border-t-2 border-black pt-2 space-y-2">
                 <p>We recommend staying at the Hilton because all of our celebrations will be held on-site. This comes with the added benefit of having all of our favorite people under one roof to make the weekend truly special!</p>
                 <p>We also highly recommend using the room block to book as this will provide you the best rate. Using the link above avoids a 19% tax that is applied at check-in if you book independently through the Hilton or other 3rd party sites.</p>
