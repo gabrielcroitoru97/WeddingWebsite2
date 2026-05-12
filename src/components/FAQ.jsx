@@ -31,7 +31,11 @@ const FAQ = () => {
     },
     {
       question: "Where should I stay?",
-      answer: "We recommend staying at the Hilton Hotel since this is where all the events will be and it’ll give you a chance to be with the rest of the guests. We also recommend booking through our room block for the best rates, note that other sites may advertise prices that don’t include the 19% tax that gets added at check-in."
+      answer: (
+        <>
+          We recommend staying at the Hilton Hotel since this is where all the events will be and it’ll give you a chance to be with the rest of the guests. We also recommend booking through our room block for the best rates, note that other sites may advertise prices that don’t include the 19% tax that gets added at check-in. The room block can be found through <a href="https://www.hilton.com/en/attend-my-event/ctghihh-gubjsg-858f4144-590b-409d-978c-d1bdc2ca4d8/" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">this link</a>.
+        </>
+      )
     },
     {
       question: "I’ve never been to a Jewish wedding, what will it be like?",

@@ -64,26 +64,30 @@ const Travel = () => {
               <p><strong>Special Rate:</strong> Available until December 15th, 2026</p>
               <div className="my-4 p-4 border-2 border-black bg-gray-50">
                 <p className="font-bold mb-4">Room Rates (per night):</p>
-                <div className="grid grid-cols-[auto_1fr_1fr] gap-x-2 md:gap-x-4 gap-y-3 items-center text-center">
+                <div className="grid grid-cols-[auto_1fr_1fr] text-center">
                   {/* Header Row */}
-                  <div className="col-start-2 col-span-2 font-bold uppercase text-xs md:text-sm tracking-wider">Number of people</div>
+                  <div className="col-start-2 col-span-2 font-bold uppercase text-xs md:text-sm tracking-wider mb-2">Number of people</div>
                   
                   {/* Column Headers */}
-                  <div className="col-start-2 font-bold">1 Person</div>
-                  <div className="col-start-3 font-bold">2 People</div>
+                  <div className="col-start-2 font-bold mb-2">1 Person</div>
+                  <div className="col-start-3 font-bold mb-2">2 People</div>
 
-                  {/* Without Breakfast Row */}
-                  <div className="font-bold text-sm md:text-base text-right pr-2 leading-tight">Without<br className="md:hidden" /> Breakfast</div>
-                  <div className="border-2 border-black p-4 bg-white text-xl md:text-2xl font-black hover:bg-yellow-100 transition-colors cursor-default shadow-[2px_2px_0_0_#000]">$190</div>
-                  <div className="border-2 border-black p-4 bg-white text-xl md:text-2xl font-black hover:bg-yellow-100 transition-colors cursor-default shadow-[2px_2px_0_0_#000]">$190</div>
+                  {/* Side Labels */}
+                  <div className="grid grid-rows-2 text-right pr-3 md:pr-4 font-bold text-sm md:text-base leading-tight h-full">
+                    <div className="flex items-center justify-end">Without<br className="md:hidden" /> Breakfast</div>
+                    <div className="flex items-center justify-end">With<br className="md:hidden" /> Breakfast</div>
+                  </div>
 
-                  {/* With Breakfast Row */}
-                  <div className="font-bold text-sm md:text-base text-right pr-2 leading-tight">With<br className="md:hidden" /> Breakfast</div>
-                  <div className="border-2 border-black p-4 bg-white text-xl md:text-2xl font-black hover:bg-blue-100 transition-colors cursor-default shadow-[2px_2px_0_0_#000]">$208</div>
-                  <div className="border-2 border-black p-4 bg-white text-xl md:text-2xl font-black hover:bg-blue-100 transition-colors cursor-default shadow-[2px_2px_0_0_#000]">$226</div>
+                  {/* 2x2 Price Grid */}
+                  <div className="col-start-2 col-span-2 grid grid-cols-2 grid-rows-2 border-2 border-black bg-white shadow-[4px_4px_0_0_#000]">
+                    <div className="border-b-2 border-r-2 border-black p-4 text-xl md:text-2xl font-black hover:bg-yellow-100 transition-colors cursor-default flex items-center justify-center">$190</div>
+                    <div className="border-b-2 border-black p-4 text-xl md:text-2xl font-black hover:bg-yellow-100 transition-colors cursor-default flex items-center justify-center">$190</div>
+                    <div className="border-r-2 border-black p-4 text-xl md:text-2xl font-black hover:bg-blue-100 transition-colors cursor-default flex items-center justify-center">$208</div>
+                    <div className="p-4 text-xl md:text-2xl font-black hover:bg-blue-100 transition-colors cursor-default flex items-center justify-center">$226</div>
+                  </div>
                 </div>
                 <p className="text-sm mt-6 font-bold">Each additional person: $40 with breakfast, $22 without breakfast</p>
-                <p className="text-sm mt-2">To book a room without breakfast, please email <a href="mailto:CTGHI_RM@hilton.com" className="text-blue-600 hover:underline font-bold">CTGHI_RM@hilton.com</a>. Room with breakfast can be booked directly through the link.</p>
+                <p className="text-sm mt-2">To book a room without breakfast, please email <a href="mailto:CTGHI_RM@hilton.com" className="text-blue-600 hover:underline font-bold">CTGHI_RM@hilton.com</a>. Rooms with breakfast can be booked directly through the link.</p>
               </div>
               <div className="text-sm text-black italic mt-4 border-t-2 border-black pt-2 space-y-2">
                 <p>We recommend staying at the Hilton because all of our celebrations will be held on-site. This comes with the added benefit of having all of our favorite people under one roof to make the weekend truly special!</p>
