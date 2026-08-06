@@ -86,7 +86,8 @@ const Travel = () => {
                     <div className="p-4 text-xl md:text-2xl font-black hover:bg-blue-100 transition-colors cursor-default flex items-center justify-center">$226</div>
                   </div>
                 </div>
-                <p className="text-sm mt-6 font-bold">Each additional person: $40 with breakfast, $22 without breakfast</p>
+                <p className="text-sm mt-6 font-bold">Ocean view rooms cost an additional $7/night</p>
+                <p className="text-sm mt-2 font-bold">Each additional person: $40 with breakfast, $22 without breakfast</p>
                 <p className="text-sm mt-2">To book a room without breakfast, please email <a href="mailto:CTGHI_RM@hilton.com" className="text-blue-600 hover:underline font-bold">CTGHI_RM@hilton.com</a>. Rooms with breakfast can be booked directly through the link.</p>
               </div>
               <div className="text-sm text-black italic mt-4 border-t-2 border-black pt-2 space-y-2">
