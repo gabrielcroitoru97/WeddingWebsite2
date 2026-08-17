@@ -19,15 +19,10 @@ const WeddingDetails = () => {
       color: "bg-indigo-200",
       dressCode: "Dressy casual (think tropical: sundresses, linen shirts, guayaberas, short sleeve button downs, etc)",
       subEvents: [{
-        title: "Candle Lighting",
-        time: "5:45 PM",
-        location: "The Beach",
-        description: "For anyone interested, join us to light shabbat candles on the beach."
-      }, {
-        title: "Kabbalat Shabbat and Maariv Services",
+        title: "Optional Orthodox-Style Shabbat Services",
         time: "6:00 PM",
         location: "TBD",
-        description: "Optional services led by Joey Becker."
+        description: "For anyone interested, join us for Shabbat services. Please note that this is a more traditional service."
       }, {
         title: "Shabbat Dinner",
         time: "7:30 PM",
