@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { MapPin, Clock, Heart, Music, Sun, Wine, Ticket, Shirt, Star, Users, Moon } from 'lucide-react';
+import { MapPin, Clock, Heart, Music, Sun, Wine, Ticket, Shirt, Star, Users, Moon, Medal, Footprints } from 'lucide-react';
 import { cn } from '@/lib/utils';
 const WeddingDetails = () => {
   const timelineData = [{
@@ -22,7 +22,7 @@ const WeddingDetails = () => {
         title: "Optional Orthodox-Style Shabbat Services",
         time: "6:00 PM",
         location: "TBD",
-        description: "For anyone interested, join us for Shabbat services. Please note that this is a more traditional service."
+        description: "For anyone interested, join us for Shabbat services. Please note that this is a more traditional service"
       }, {
         title: "Shabbat Dinner",
         time: "7:30 PM",
@@ -32,12 +32,20 @@ const WeddingDetails = () => {
         title: "Tisch",
         time: "Following Shabbat Dinner",
         location: "TBD",
-        description: "A chance for the friends of the couple to have a few drinks and toast to the bride and groom. Of course all are welcome, but this event is really geared towards the younger crowd."
+        description: "A chance for the friends of the couple to have a few drinks and toast to the bride and groom. Of course all are welcome, but this event is really geared towards the younger crowd"
       }]
     }]
   }, {
     date: "Saturday, Jan 16, 2027",
     events: [{
+      title: "Old City Shvitz 5K and 10K Group Run",
+      time: "8:00 AM",
+      location: "Meet in front of the Hotel Santa Teresa",
+      description: "Easy pace 5 km or 10km group run (~10:00/mi pace) on the walls and streets of the old city. The winner of the 10K get to be picked up in a chair at the reception",
+      icon: Footprints,
+      color: "bg-orange-200",
+      dressCode: "Running / athletic gear, running shoes"
+    }, {
       title: "Pool Party",
       time: "1:00 PM",
       location: "Hilton Pool",
@@ -68,7 +76,7 @@ const WeddingDetails = () => {
       title: "The Reception",
       time: "Following the Ceremony",
       location: "Hilton Ballroom",
-      description: "If you haven't seen a Latino Jewish Hora, make sure you bring closed toed shoes. And maybe a mouth guard. And make sure your health and life insurances are up to date.",
+      description: "If you haven't seen a Latino Jewish Hora, make sure you bring closed toed shoes. And maybe a mouth guard. And make sure your health and life insurances are up to date",
       icon: Music,
       color: "bg-purple-200",
       dressCode: "Cocktail/ formal (suits, dresses)"
