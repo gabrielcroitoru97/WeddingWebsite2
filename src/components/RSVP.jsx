@@ -113,13 +113,21 @@ const RSVP = () => {
       // Initialize form state for all guests in the group
       const initialRsvps = groupGuests.map(g => {
         const existingRsvp = existingRsvpsData?.find(r => r.guest_name === g.name);
+        const hasExisting = !!existingRsvp;
+        const attendingTour = existingRsvp?.attending_tour || false;
+        const attendingShabbat = existingRsvp?.attending_shabbat || false;
+        const attendingPoolParty = existingRsvp?.attending_pool_party || false;
+        const attendingWedding = existingRsvp?.attending_wedding || false;
+        const notAttending = hasExisting && !attendingTour && !attendingShabbat && !attendingPoolParty && !attendingWedding;
+
         return {
           id: existingRsvp?.id || null,
           guestName: g.name,
-          attendingTour: existingRsvp?.attending_tour || false,
-          attendingShabbat: existingRsvp?.attending_shabbat || false,
-          attendingPoolParty: existingRsvp?.attending_pool_party || false,
-          attendingWedding: existingRsvp?.attending_wedding || false,
+          attendingTour,
+          attendingShabbat,
+          attendingPoolParty,
+          attendingWedding,
+          notAttending,
           dietaryRestrictions: existingRsvp?.dietary_restrictions || '',
           additionalNotes: existingRsvp?.additional_notes || ''
         };
@@ -146,18 +154,35 @@ const RSVP = () => {
     setRsvps(newRsvps);
   };
 
+  const toggleNotAttending = (index) => {
+    const newRsvps = [...rsvps];
+    const nextNotAttending = !newRsvps[index].notAttending;
+    newRsvps[index] = {
+      ...newRsvps[index],
+      notAttending: nextNotAttending,
+      ...(nextNotAttending ? {
+        attendingTour: false,
+        attendingShabbat: false,
+        attendingPoolParty: false,
+        attendingWedding: false
+      } : {})
+    };
+    setRsvps(newRsvps);
+  };
+
   const handleSubmit = async e => {
     e.preventDefault();
     setLoading(true);
     try {
       for (const formData of rsvps) {
+        const isNotAttending = !!formData.notAttending;
         const rsvpData = {
           guest_name: formData.guestName,
-          attending_tour: formData.attendingTour,
-          attending_shabbat: formData.attendingShabbat,
-          attending_pool_party: formData.attendingPoolParty,
-          attending_wedding: formData.attendingWedding,
-          dietary_restrictions: formData.dietaryRestrictions,
+          attending_tour: isNotAttending ? false : Boolean(formData.attendingTour),
+          attending_shabbat: isNotAttending ? false : Boolean(formData.attendingShabbat),
+          attending_pool_party: isNotAttending ? false : Boolean(formData.attendingPoolParty),
+          attending_wedding: isNotAttending ? false : Boolean(formData.attendingWedding),
+          dietary_restrictions: isNotAttending ? '' : formData.dietaryRestrictions,
           additional_notes: formData.additionalNotes
         };
 
@@ -183,7 +208,7 @@ const RSVP = () => {
         if (error) throw error;
       }
 
-      const anyAttending = rsvps.some(r => r.attendingWedding);
+      const anyAttending = rsvps.some(r => !r.notAttending && (r.attendingWedding || r.attendingTour || r.attendingShabbat || r.attendingPoolParty));
       const anyUpdated = rsvps.some(r => r.id);
 
       toast({
@@ -311,10 +336,14 @@ const RSVP = () => {
                     <div className="mt-6 space-y-6">
                       <div>
                         <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-3 gap-2">
-                          <Label className="block font-bold font-mono text-black uppercase">Which events will {rsvp.guestName.split(' ')[0]} be attending?</Label>
+                          <Label className={`block font-bold font-mono uppercase ${rsvp.notAttending ? 'text-gray-400' : 'text-black'}`}>
+                            Which events will {rsvp.guestName.split(' ')[0]} be attending?
+                          </Label>
                           <button 
                             type="button"
+                            disabled={rsvp.notAttending}
                             onClick={() => {
+                              if (rsvp.notAttending) return;
                               const isAttendingAll = rsvp.attendingTour && rsvp.attendingShabbat && rsvp.attendingPoolParty && rsvp.attendingWedding;
                               const newValue = !isAttendingAll;
                               const newRsvps = [...rsvps];
@@ -327,7 +356,11 @@ const RSVP = () => {
                               };
                               setRsvps(newRsvps);
                             }}
-                            className="text-xs font-bold font-mono uppercase bg-black text-white px-3 py-1 hover:bg-purple-500 hover:text-black border-2 border-black shadow-[2px_2px_0_0_rgba(0,0,0,1)] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all"
+                            className={`text-xs font-bold font-mono uppercase px-3 py-1 border-2 border-black transition-all ${
+                              rsvp.notAttending 
+                                ? 'bg-gray-200 text-gray-400 border-gray-300 cursor-not-allowed shadow-none' 
+                                : 'bg-black text-white hover:bg-purple-500 hover:text-black shadow-[2px_2px_0_0_rgba(0,0,0,1)] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none'
+                            }`}
                           >
                             {rsvp.attendingTour && rsvp.attendingShabbat && rsvp.attendingPoolParty && rsvp.attendingWedding ? 'Deselect All' : 'Select All'}
                           </button>
@@ -341,22 +374,50 @@ const RSVP = () => {
                           ].map((event) => (
                             <div 
                               key={event.id}
-                              className={`flex items-center space-x-3 p-3 border-2 border-black shadow-[4px_4px_0_0_rgba(0,0,0,1)] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[2px_2px_0_0_rgba(0,0,0,1)] transition-all cursor-pointer ${rsvp[event.id] ? 'bg-purple-100' : 'bg-white'}`}
-                              onClick={() => updateRsvp(index, event.id, !rsvp[event.id])}
+                              className={`flex items-center space-x-3 p-3 border-2 transition-all select-none ${
+                                rsvp.notAttending
+                                  ? 'border-gray-300 bg-gray-100 text-gray-400 cursor-not-allowed opacity-60 shadow-none'
+                                  : `border-black shadow-[4px_4px_0_0_rgba(0,0,0,1)] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[2px_2px_0_0_rgba(0,0,0,1)] cursor-pointer ${rsvp[event.id] ? 'bg-purple-100' : 'bg-white'}`
+                              }`}
+                              onClick={() => {
+                                if (!rsvp.notAttending) {
+                                  updateRsvp(index, event.id, !rsvp[event.id]);
+                                }
+                              }}
                             >
-                              <div className={`w-6 h-6 border-2 border-black flex items-center justify-center transition-colors ${rsvp[event.id] ? 'bg-black' : 'bg-white'}`}>
-                                {rsvp[event.id] && <Check className="text-white w-4 h-4" />}
+                              <div className={`w-6 h-6 border-2 flex items-center justify-center transition-colors ${
+                                rsvp.notAttending 
+                                  ? 'border-gray-300 bg-gray-200' 
+                                  : `border-black ${rsvp[event.id] ? 'bg-black' : 'bg-white'}`
+                              }`}>
+                                {!rsvp.notAttending && rsvp[event.id] && <Check className="text-white w-4 h-4" />}
                               </div>
                               <div>
-                                <p className="font-bold font-mono uppercase text-sm md:text-base">{event.label}</p>
-                                <p className="font-mono text-xs md:text-sm text-gray-600">{event.date}</p>
+                                <p className={`font-bold font-mono uppercase text-sm md:text-base ${rsvp.notAttending ? 'text-gray-400' : 'text-black'}`}>{event.label}</p>
+                                <p className={`font-mono text-xs md:text-sm ${rsvp.notAttending ? 'text-gray-400' : 'text-gray-600'}`}>{event.date}</p>
                               </div>
                             </div>
                           ))}
                         </div>
+
+                        <div className="mt-4 pt-3 border-t-2 border-dashed border-gray-300">
+                          <div 
+                            className={`flex items-center space-x-3 p-3 border-2 border-black shadow-[4px_4px_0_0_rgba(0,0,0,1)] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[2px_2px_0_0_rgba(0,0,0,1)] transition-all cursor-pointer select-none ${rsvp.notAttending ? 'bg-red-100' : 'bg-white'}`}
+                            onClick={() => toggleNotAttending(index)}
+                          >
+                            <div className={`w-6 h-6 border-2 border-black flex items-center justify-center transition-colors ${rsvp.notAttending ? 'bg-black' : 'bg-white'}`}>
+                              {rsvp.notAttending && <Check className="text-white w-4 h-4" />}
+                            </div>
+                            <div>
+                              <p className="font-bold font-mono text-sm md:text-base text-black">
+                                I will unfortunately not be able to attend any of the events
+                              </p>
+                            </div>
+                          </div>
+                        </div>
                       </div>
 
-                      {(rsvp.attendingTour || rsvp.attendingShabbat || rsvp.attendingPoolParty || rsvp.attendingWedding) && (
+                      {!rsvp.notAttending && (rsvp.attendingTour || rsvp.attendingShabbat || rsvp.attendingPoolParty || rsvp.attendingWedding) && (
                         <div className="animate-in fade-in slide-in-from-top-4 space-y-6">
                           <div>
                             <Label className="font-bold font-mono text-black uppercase">
