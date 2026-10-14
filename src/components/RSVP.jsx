@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Search, Check } from 'lucide-react';
+import { Search, Check, Calendar } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -254,11 +254,22 @@ const RSVP = () => {
         y: 0
       }} viewport={{
         once: true
-      }} className="text-center mb-16">
+      }} className="text-center mb-12">
           <div className="inline-block bg-white border-4 border-black px-8 py-4 shadow-[8px_8px_0_0_#000] transform -rotate-1 mb-6">
             <h2 className="text-4xl md:text-6xl font-black uppercase tracking-tighter">
               RSVP
             </h2>
+          </div>
+          <div className="max-w-md mx-auto bg-yellow-300 border-2 border-black p-4 shadow-[4px_4px_0_0_rgba(0,0,0,1)] transform rotate-1">
+            <div className="flex items-center justify-center gap-2 mb-1">
+              <Calendar className="w-5 h-5 text-black" />
+              <p className="font-mono font-bold text-black text-sm md:text-base uppercase tracking-tight">
+                RSVP Deadline: November 10th
+              </p>
+            </div>
+            <p className="font-mono text-xs md:text-sm text-black font-medium">
+              Please reach out to us if you need more time!
+            </p>
           </div>
         </motion.div>
 
