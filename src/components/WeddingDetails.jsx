@@ -38,7 +38,7 @@ const WeddingDetails = () => {
   }, {
     date: "Saturday, Jan 16, 2027",
     events: [{
-      title: "Old City Shvitz 5K and 10K Group Run",
+      title: "Old City Schvitz 5K and 10K Group Run",
       time: "8:00 AM",
       location: "Meet in front of the Hotel Santa Teresa",
       description: "Easy pace 5 km or 10km group run (~10:00/mi pace) on the walls and streets of the old city. The winner of the 10K get to be picked up in a chair at the reception",
