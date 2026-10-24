@@ -82,16 +82,16 @@ const Admin = () => {
 
         return {
           id: g.id || nameKey,
-          name: g.name,
-          groupId: g.group_id || 'Individual',
+          name: String(g.name || ''),
+          groupId: g.group_id !== null && g.group_id !== undefined ? String(g.group_id) : 'Individual',
           hasRsvp,
           status,
           attendingTour: isAttendingTour,
           attendingShabbat: isAttendingShabbat,
           attendingPool: isAttendingPool,
           attendingWedding: isAttendingWedding,
-          dietaryRestrictions: rsvp?.dietary_restrictions || '',
-          additionalNotes: rsvp?.additional_notes || '',
+          dietaryRestrictions: String(rsvp?.dietary_restrictions || ''),
+          additionalNotes: String(rsvp?.additional_notes || ''),
           rsvpId: rsvp?.id || null,
           updatedAt: rsvp?.updated_at || rsvp?.created_at || null
         };
@@ -114,7 +114,7 @@ const Admin = () => {
 
           combined.push({
             id: r.id || rsvpNameKey,
-            name: r.guest_name,
+            name: String(r.guest_name || ''),
             groupId: 'External RSVP',
             hasRsvp: true,
             status,
@@ -122,8 +122,8 @@ const Admin = () => {
             attendingShabbat: isAttendingShabbat,
             attendingPool: isAttendingPool,
             attendingWedding: isAttendingWedding,
-            dietaryRestrictions: r.dietary_restrictions || '',
-            additionalNotes: r.additional_notes || '',
+            dietaryRestrictions: String(r.dietary_restrictions || ''),
+            additionalNotes: String(r.additional_notes || ''),
             rsvpId: r.id,
             updatedAt: r.updated_at || r.created_at || null
           });
@@ -175,14 +175,11 @@ const Admin = () => {
   // Filtering
   const filteredGuests = useMemo(() => {
     return guests.filter(g => {
-      // Search term
-      if (searchTerm.trim()) {
-        const term = searchTerm.toLowerCase();
-        const matchesName = g.name.toLowerCase().includes(term);
-        const matchesGroup = g.groupId.toLowerCase().includes(term);
-        const matchesDiet = g.dietaryRestrictions.toLowerCase().includes(term);
-        const matchesNotes = g.additionalNotes.toLowerCase().includes(term);
-        if (!matchesName && !matchesGroup && !matchesDiet && !matchesNotes) {
+      // Search term (searches only names)
+      const query = (searchTerm || '').trim().toLowerCase();
+      if (query) {
+        const matchesName = String(g.name || '').toLowerCase().includes(query);
+        if (!matchesName) {
           return false;
         }
       }
@@ -204,14 +201,42 @@ const Admin = () => {
         case 'declined':
           return g.status === 'declined';
         case 'dietary':
-          return g.dietaryRestrictions && g.dietaryRestrictions.trim() !== '';
+          return String(g.dietaryRestrictions || '').trim() !== '';
         case 'notes':
-          return g.additionalNotes && g.additionalNotes.trim() !== '';
+          return String(g.additionalNotes || '').trim() !== '';
         default:
           return true;
       }
     });
   }, [guests, searchTerm, activeFilter]);
+
+  // Helper to determine sort value separating Yes (2), No (1), and No Response (0)
+  const getSortValue = (guest, key) => {
+    // Event attendance fields:
+    if (['attendingWedding', 'attendingShabbat', 'attendingPool', 'attendingTour'].includes(key)) {
+      if (!guest.hasRsvp) return 0; // No Response
+      return guest[key] ? 2 : 1;    // 2 = Attending (Yes), 1 = Declined (No)
+    }
+
+    // Overall status field:
+    if (key === 'status') {
+      if (!guest.hasRsvp) return 0; // No Response
+      return guest.status === 'attending' ? 2 : 1; // 2 = Attending, 1 = Declined All
+    }
+
+    // Dietary:
+    if (key === 'dietaryRestrictions') {
+      return String(guest.dietaryRestrictions || '').trim().toLowerCase();
+    }
+
+    // Notes:
+    if (key === 'additionalNotes') {
+      return String(guest.additionalNotes || '').trim().toLowerCase();
+    }
+
+    // Name, Group, etc.
+    return String(guest[key] ?? '').trim().toLowerCase();
+  };
 
   // Sorting
   const sortedGuests = useMemo(() => {
@@ -219,23 +244,22 @@ const Admin = () => {
     const { key, direction } = sortConfig;
 
     list.sort((a, b) => {
-      let aVal = a[key];
-      let bVal = b[key];
+      const aVal = getSortValue(a, key);
+      const bVal = getSortValue(b, key);
 
-      if (typeof aVal === 'string') {
-        aVal = aVal.toLowerCase();
-        bVal = (bVal || '').toLowerCase();
+      let comparison = 0;
+      if (typeof aVal === 'number' && typeof bVal === 'number') {
+        comparison = aVal - bVal;
+      } else {
+        comparison = String(aVal).localeCompare(String(bVal));
       }
 
-      // Special handling for booleans / status
-      if (typeof aVal === 'boolean') {
-        aVal = aVal ? 1 : 0;
-        bVal = bVal ? 1 : 0;
+      if (comparison !== 0) {
+        return direction === 'asc' ? comparison : -comparison;
       }
 
-      if (aVal < bVal) return direction === 'asc' ? -1 : 1;
-      if (aVal > bVal) return direction === 'asc' ? 1 : -1;
-      return 0;
+      // Secondary tie-breaker: sort alphabetically by name (A-Z)
+      return String(a.name || '').localeCompare(String(b.name || ''));
     });
 
     return list;
@@ -243,7 +267,10 @@ const Admin = () => {
 
   const requestSort = (key) => {
     let direction = 'asc';
-    if (sortConfig.key === key && sortConfig.direction === 'asc') {
+    if (sortConfig.key === key) {
+      direction = sortConfig.direction === 'asc' ? 'desc' : 'asc';
+    } else if (['status', 'attendingWedding', 'attendingShabbat', 'attendingPool', 'attendingTour'].includes(key)) {
+      // For RSVP fields, default to descending first so 'Attending' appears at top
       direction = 'desc';
     }
     setSortConfig({ key, direction });
@@ -275,15 +302,15 @@ const Admin = () => {
     ];
 
     const rows = sortedGuests.map(g => [
-      `"${g.name.replace(/"/g, '""')}"`,
-      `"${g.groupId.replace(/"/g, '""')}"`,
+      `"${String(g.name || '').replace(/"/g, '""')}"`,
+      `"${String(g.groupId || '').replace(/"/g, '""')}"`,
       g.hasRsvp ? (g.status === 'attending' ? 'Attending' : 'Declined All') : 'No Response',
       !g.hasRsvp ? 'No Response' : (g.attendingWedding ? 'Attending' : 'No'),
       !g.hasRsvp ? 'No Response' : (g.attendingShabbat ? 'Attending' : 'No'),
       !g.hasRsvp ? 'No Response' : (g.attendingPool ? 'Attending' : 'No'),
       !g.hasRsvp ? 'No Response' : (g.attendingTour ? 'Attending' : 'No'),
-      `"${(g.dietaryRestrictions || '').replace(/"/g, '""')}"`,
-      `"${(g.additionalNotes || '').replace(/"/g, '""')}"`
+      `"${String(g.dietaryRestrictions || '').replace(/"/g, '""')}"`,
+      `"${String(g.additionalNotes || '').replace(/"/g, '""')}"`
     ]);
 
     const csvContent = [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
@@ -444,7 +471,7 @@ const Admin = () => {
               <Search className="w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" />
               <Input
                 type="text"
-                placeholder="Search by name, party group, dietary restriction, or note..."
+                placeholder="Search by guest name..."
                 value={searchTerm}
                 onChange={e => setSearchTerm(e.target.value)}
                 className="pl-10 pr-4 py-2 border-2 border-black rounded-none shadow-[2px_2px_0_0_#000] font-mono text-sm w-full"
