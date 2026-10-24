@@ -14,6 +14,7 @@ import SingleGuests from '@/components/SingleGuests';
 import FAQ from '@/components/FAQ';
 import Pong from '@/components/Pong';
 import { JokePage, MarcoPage, FutureKidsPage } from '@/components/MorePages';
+import Admin from '@/components/Admin';
 import { Toaster } from '@/components/ui/toaster';
 
 function App() {
@@ -85,6 +86,7 @@ function App() {
             <Route path="/more/marco" element={<MarcoPage />} />
             <Route path="/more/future-kids" element={<FutureKidsPage />} />
             <Route path="/more/pong" element={<Pong />} />
+            <Route path="/admin" element={<Admin />} />
           </Routes>
         </main>
         <Toaster />
