@@ -380,7 +380,7 @@ const Admin = () => {
         )}
 
         {/* Top Metric Cards */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-7 gap-3 md:gap-4">
           {/* Total Guests */}
           <div className="bg-white border-3 border-black p-4 shadow-[4px_4px_0_0_#000]">
             <div className="flex items-center justify-between text-gray-500 mb-1">
@@ -415,14 +415,14 @@ const Admin = () => {
             </div>
           </div>
 
-          {/* Attending Wedding */}
-          <div className="bg-purple-200 border-3 border-black p-4 shadow-[4px_4px_0_0_#000]">
+          {/* Attending City Tour */}
+          <div className="bg-pink-100 border-3 border-black p-4 shadow-[4px_4px_0_0_#000]">
             <div className="flex items-center justify-between mb-1">
-              <span className="text-xs font-mono font-bold uppercase text-black">Wedding</span>
-              <Heart className="w-4 h-4 text-purple-800" />
+              <span className="text-xs font-mono font-bold uppercase text-black">City Tour</span>
+              <MapPin className="w-4 h-4 text-pink-800" />
             </div>
-            <div className="text-3xl font-black text-purple-900">{stats.wedding}</div>
-            <div className="text-xs font-mono text-purple-800 font-bold mt-1">Attending Sun</div>
+            <div className="text-3xl font-black text-pink-900">{stats.tour}</div>
+            <div className="text-xs font-mono text-pink-800 font-bold mt-1">Attending Fri</div>
           </div>
 
           {/* Attending Shabbat */}
@@ -444,14 +444,21 @@ const Admin = () => {
             <div className="text-3xl font-black text-cyan-900">{stats.pool}</div>
             <div className="text-xs font-mono text-cyan-800 font-bold mt-1">Attending Sat</div>
           </div>
+
+          {/* Attending Wedding */}
+          <div className="bg-purple-200 border-3 border-black p-4 shadow-[4px_4px_0_0_#000]">
+            <div className="flex items-center justify-between mb-1">
+              <span className="text-xs font-mono font-bold uppercase text-black">Wedding</span>
+              <Heart className="w-4 h-4 text-purple-800" />
+            </div>
+            <div className="text-3xl font-black text-purple-900">{stats.wedding}</div>
+            <div className="text-xs font-mono text-purple-800 font-bold mt-1">Attending Sun</div>
+          </div>
         </div>
 
         {/* Secondary Stats Strip */}
         <div className="flex flex-wrap items-center gap-3 bg-white border-3 border-black p-3 shadow-[4px_4px_0_0_#000] text-xs font-mono font-bold">
           <span className="uppercase text-gray-600">Quick Stats:</span>
-          <span className="bg-pink-100 border border-black px-2 py-1">
-            Old City Tour: <strong className="text-black">{stats.tour}</strong>
-          </span>
           <span className="bg-red-100 border border-black px-2 py-1 text-red-900">
             Declined All: <strong className="text-red-900">{stats.declinedAll}</strong>
           </span>
