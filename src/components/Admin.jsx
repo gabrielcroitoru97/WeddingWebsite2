@@ -18,7 +18,9 @@ import {
   Sun,
   Heart,
   MapPin,
-  Eye
+  Eye,
+  Clock,
+  Filter
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -32,6 +34,32 @@ const Admin = () => {
   const [activeFilter, setActiveFilter] = useState('all');
   const [sortConfig, setSortConfig] = useState({ key: 'name', direction: 'asc' });
   const [selectedGuest, setSelectedGuest] = useState(null);
+
+  const initialColumnFilters = {
+    name: '',
+    groupId: 'all',
+    status: 'all',
+    attendingWedding: 'all',
+    attendingShabbat: 'all',
+    attendingPool: 'all',
+    attendingTour: 'all',
+    responseDate: 'all'
+  };
+
+  const [columnFilters, setColumnFilters] = useState(initialColumnFilters);
+
+  const setColumnFilter = (columnKey, value) => {
+    setColumnFilters(prev => ({
+      ...prev,
+      [columnKey]: value
+    }));
+  };
+
+  const resetColumnFilters = () => {
+    setColumnFilters(initialColumnFilters);
+    setSearchTerm('');
+    setActiveFilter('all');
+  };
 
   const fetchData = async () => {
     setLoading(true);
@@ -70,6 +98,7 @@ const Admin = () => {
         const isAttendingShabbat = Boolean(rsvp?.attending_shabbat);
         const isAttendingPool = Boolean(rsvp?.attending_pool_party);
         const isAttendingWedding = Boolean(rsvp?.attending_wedding);
+        const responseDate = rsvp?.created_at || rsvp?.updated_at || rsvp?.submitted_at || null;
 
         let status = 'no_response';
         if (hasRsvp) {
@@ -93,7 +122,8 @@ const Admin = () => {
           dietaryRestrictions: String(rsvp?.dietary_restrictions || ''),
           additionalNotes: String(rsvp?.additional_notes || ''),
           rsvpId: rsvp?.id || null,
-          updatedAt: rsvp?.updated_at || rsvp?.created_at || null
+          responseDate: responseDate,
+          updatedAt: responseDate
         };
       });
 
@@ -106,6 +136,7 @@ const Admin = () => {
           const isAttendingShabbat = Boolean(r.attending_shabbat);
           const isAttendingPool = Boolean(r.attending_pool_party);
           const isAttendingWedding = Boolean(r.attending_wedding);
+          const responseDate = r.created_at || r.updated_at || r.submitted_at || null;
 
           let status = 'declined';
           if (isAttendingTour || isAttendingShabbat || isAttendingPool || isAttendingWedding) {
@@ -125,7 +156,8 @@ const Admin = () => {
             dietaryRestrictions: String(r.dietary_restrictions || ''),
             additionalNotes: String(r.additional_notes || ''),
             rsvpId: r.id,
-            updatedAt: r.updated_at || r.created_at || null
+            responseDate: responseDate,
+            updatedAt: responseDate
           });
         }
       });
@@ -172,19 +204,149 @@ const Admin = () => {
     };
   }, [guests]);
 
-  // Filtering
+  // Date formatting helpers
+  const formatDateOnly = (dateStr) => {
+    if (!dateStr) return '';
+    try {
+      const d = new Date(dateStr);
+      if (isNaN(d.getTime())) return '';
+      return d.toLocaleDateString('en-US', {
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric'
+      });
+    } catch {
+      return '';
+    }
+  };
+
+  const formatFullDate = (dateStr) => {
+    if (!dateStr) return '';
+    try {
+      const d = new Date(dateStr);
+      if (isNaN(d.getTime())) return '';
+      return (
+        d.toLocaleDateString('en-US', {
+          month: 'short',
+          day: 'numeric',
+          year: 'numeric'
+        }) +
+        ' ' +
+        d.toLocaleTimeString('en-US', {
+          hour: 'numeric',
+          minute: '2-digit'
+        })
+      );
+    } catch {
+      return '';
+    }
+  };
+
+  // Unique groups for Party / Group filter dropdown
+  const uniqueGroups = useMemo(() => {
+    const set = new Set();
+    guests.forEach(g => {
+      if (g.groupId) set.add(String(g.groupId));
+    });
+    return Array.from(set).sort((a, b) => {
+      const numA = parseInt(a, 10);
+      const numB = parseInt(b, 10);
+      if (!isNaN(numA) && !isNaN(numB)) return numA - numB;
+      return a.localeCompare(b);
+    });
+  }, [guests]);
+
+  // Unique response dates for Date filter dropdown
+  const uniqueDates = useMemo(() => {
+    const set = new Set();
+    guests.forEach(g => {
+      if (g.responseDate) {
+        const formatted = formatDateOnly(g.responseDate);
+        if (formatted) set.add(formatted);
+      }
+    });
+    return Array.from(set).sort((a, b) => new Date(b).getTime() - new Date(a).getTime());
+  }, [guests]);
+
+  // Active filters tracker
+  const hasActiveColumnFilters = useMemo(() => {
+    return (
+      (columnFilters.name && columnFilters.name.trim() !== '') ||
+      columnFilters.groupId !== 'all' ||
+      columnFilters.status !== 'all' ||
+      columnFilters.attendingWedding !== 'all' ||
+      columnFilters.attendingShabbat !== 'all' ||
+      columnFilters.attendingPool !== 'all' ||
+      columnFilters.attendingTour !== 'all' ||
+      columnFilters.responseDate !== 'all' ||
+      (searchTerm && searchTerm.trim() !== '') ||
+      activeFilter !== 'all'
+    );
+  }, [columnFilters, searchTerm, activeFilter]);
+
+  // Filtering: combines name search, column dropdown filters, and quick pill filters
   const filteredGuests = useMemo(() => {
     return guests.filter(g => {
-      // Search term (searches only names)
-      const query = (searchTerm || '').trim().toLowerCase();
-      if (query) {
-        const matchesName = String(g.name || '').toLowerCase().includes(query);
-        if (!matchesName) {
-          return false;
+      // 1. Guest Name filter (syncs search bar & column filter)
+      const nameQuery = (columnFilters.name || searchTerm || '').trim().toLowerCase();
+      if (nameQuery) {
+        const matchesName = String(g.name || '').toLowerCase().includes(nameQuery);
+        if (!matchesName) return false;
+      }
+
+      // 2. Column filter: Party / Group
+      if (columnFilters.groupId !== 'all') {
+        if (String(g.groupId) !== columnFilters.groupId) return false;
+      }
+
+      // 3. Column filter: Overall Status
+      if (columnFilters.status !== 'all') {
+        if (columnFilters.status === 'no_response' && g.hasRsvp) return false;
+        if (columnFilters.status === 'attending' && g.status !== 'attending') return false;
+        if (columnFilters.status === 'declined' && g.status !== 'declined') return false;
+      }
+
+      // 4. Column filter: Wedding
+      if (columnFilters.attendingWedding !== 'all') {
+        if (columnFilters.attendingWedding === 'no_response' && g.hasRsvp) return false;
+        if (columnFilters.attendingWedding === 'attending' && (!g.hasRsvp || !g.attendingWedding)) return false;
+        if (columnFilters.attendingWedding === 'declined' && (!g.hasRsvp || g.attendingWedding)) return false;
+      }
+
+      // 5. Column filter: Shabbat
+      if (columnFilters.attendingShabbat !== 'all') {
+        if (columnFilters.attendingShabbat === 'no_response' && g.hasRsvp) return false;
+        if (columnFilters.attendingShabbat === 'attending' && (!g.hasRsvp || !g.attendingShabbat)) return false;
+        if (columnFilters.attendingShabbat === 'declined' && (!g.hasRsvp || g.attendingShabbat)) return false;
+      }
+
+      // 6. Column filter: Pool Party
+      if (columnFilters.attendingPool !== 'all') {
+        if (columnFilters.attendingPool === 'no_response' && g.hasRsvp) return false;
+        if (columnFilters.attendingPool === 'attending' && (!g.hasRsvp || !g.attendingPool)) return false;
+        if (columnFilters.attendingPool === 'declined' && (!g.hasRsvp || g.attendingPool)) return false;
+      }
+
+      // 7. Column filter: Tour
+      if (columnFilters.attendingTour !== 'all') {
+        if (columnFilters.attendingTour === 'no_response' && g.hasRsvp) return false;
+        if (columnFilters.attendingTour === 'attending' && (!g.hasRsvp || !g.attendingTour)) return false;
+        if (columnFilters.attendingTour === 'declined' && (!g.hasRsvp || g.attendingTour)) return false;
+      }
+
+      // 8. Column filter: Response Date
+      if (columnFilters.responseDate !== 'all') {
+        if (columnFilters.responseDate === 'no_response') {
+          if (g.hasRsvp && g.responseDate) return false;
+        } else if (columnFilters.responseDate === 'responded') {
+          if (!g.hasRsvp || !g.responseDate) return false;
+        } else {
+          const formattedDate = formatDateOnly(g.responseDate);
+          if (formattedDate !== columnFilters.responseDate) return false;
         }
       }
 
-      // Filter category
+      // 9. Quick category filter tabs
       switch (activeFilter) {
         case 'rsvped':
           return g.hasRsvp;
@@ -208,7 +370,7 @@ const Admin = () => {
           return true;
       }
     });
-  }, [guests, searchTerm, activeFilter]);
+  }, [guests, searchTerm, activeFilter, columnFilters]);
 
   // Helper to determine sort value separating Yes (2), No (1), and No Response (0)
   const getSortValue = (guest, key) => {
@@ -244,6 +406,24 @@ const Admin = () => {
     const { key, direction } = sortConfig;
 
     list.sort((a, b) => {
+      // Special handler for Response Date sorting
+      if (key === 'responseDate') {
+        const aTime = a.responseDate ? new Date(a.responseDate).getTime() : null;
+        const bTime = b.responseDate ? new Date(b.responseDate).getTime() : null;
+
+        // Keep unresponded guests at the bottom regardless of asc/desc
+        if (aTime === null && bTime === null) {
+          return String(a.name || '').localeCompare(String(b.name || ''));
+        }
+        if (aTime === null) return 1;
+        if (bTime === null) return -1;
+
+        const timeDiff = direction === 'asc' ? aTime - bTime : bTime - aTime;
+        if (timeDiff !== 0) return timeDiff;
+
+        return String(a.name || '').localeCompare(String(b.name || ''));
+      }
+
       const aVal = getSortValue(a, key);
       const bVal = getSortValue(b, key);
 
@@ -269,8 +449,8 @@ const Admin = () => {
     let direction = 'asc';
     if (sortConfig.key === key) {
       direction = sortConfig.direction === 'asc' ? 'desc' : 'asc';
-    } else if (['status', 'attendingWedding', 'attendingShabbat', 'attendingPool', 'attendingTour'].includes(key)) {
-      // For RSVP fields, default to descending first so 'Attending' appears at top
+    } else if (['status', 'attendingWedding', 'attendingShabbat', 'attendingPool', 'attendingTour', 'responseDate'].includes(key)) {
+      // For RSVP fields & response date, default to descending first
       direction = 'desc';
     }
     setSortConfig({ key, direction });
@@ -297,6 +477,7 @@ const Admin = () => {
       'Shabbat (Fri)',
       'Pool Party (Sat)',
       'City Tour (Fri)',
+      'Response Date',
       'Dietary Restrictions',
       'Additional Notes'
     ];
@@ -309,6 +490,7 @@ const Admin = () => {
       !g.hasRsvp ? 'No Response' : (g.attendingShabbat ? 'Attending' : 'No'),
       !g.hasRsvp ? 'No Response' : (g.attendingPool ? 'Attending' : 'No'),
       !g.hasRsvp ? 'No Response' : (g.attendingTour ? 'Attending' : 'No'),
+      `"${formatFullDate(g.responseDate) || 'No Response'}"`,
       `"${String(g.dietaryRestrictions || '').replace(/"/g, '""')}"`,
       `"${String(g.additionalNotes || '').replace(/"/g, '""')}"`
     ]);
@@ -480,12 +662,19 @@ const Admin = () => {
                 type="text"
                 placeholder="Search by guest name..."
                 value={searchTerm}
-                onChange={e => setSearchTerm(e.target.value)}
+                onChange={e => {
+                  const val = e.target.value;
+                  setSearchTerm(val);
+                  setColumnFilter('name', val);
+                }}
                 className="pl-10 pr-4 py-2 border-2 border-black rounded-none shadow-[2px_2px_0_0_#000] font-mono text-sm w-full"
               />
               {searchTerm && (
                 <button
-                  onClick={() => setSearchTerm('')}
+                  onClick={() => {
+                    setSearchTerm('');
+                    setColumnFilter('name', '');
+                  }}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-mono font-bold bg-gray-200 hover:bg-gray-300 px-1.5 py-0.5 border border-black"
                 >
                   CLEAR
@@ -493,9 +682,20 @@ const Admin = () => {
               )}
             </div>
 
-            {/* Match Counter */}
-            <div className="text-xs font-mono font-bold text-gray-600 shrink-0">
-              Showing <span className="text-black text-sm">{sortedGuests.length}</span> of {guests.length} guests
+            {/* Match Counter & Reset Action */}
+            <div className="flex items-center gap-3 shrink-0">
+              {hasActiveColumnFilters && (
+                <button
+                  onClick={resetColumnFilters}
+                  className="inline-flex items-center gap-1 bg-red-200 hover:bg-red-300 text-red-950 border-2 border-black px-2.5 py-1 text-xs font-mono font-bold uppercase shadow-[2px_2px_0_0_#000] active:translate-x-[1px] active:translate-y-[1px] active:shadow-none transition-all"
+                >
+                  <X className="w-3.5 h-3.5" />
+                  Clear Filters
+                </button>
+              )}
+              <div className="text-xs font-mono font-bold text-gray-600">
+                Showing <span className="text-black text-sm">{sortedGuests.length}</span> of {guests.length} guests
+              </div>
             </div>
           </div>
 
@@ -577,6 +777,12 @@ const Admin = () => {
                   >
                     Tour {getSortIcon('attendingTour')}
                   </th>
+                  <th
+                    onClick={() => requestSort('responseDate')}
+                    className="p-3 md:p-4 font-black uppercase tracking-wider cursor-pointer hover:bg-yellow-400 transition-colors whitespace-nowrap text-center"
+                  >
+                    Responded At {getSortIcon('responseDate')}
+                  </th>
                   <th className="p-3 md:p-4 font-black uppercase tracking-wider whitespace-nowrap text-center">
                     Dietary
                   </th>
@@ -587,18 +793,167 @@ const Admin = () => {
                     Details
                   </th>
                 </tr>
+
+                {/* Column Filters Row (per column filtering except dietary & notes) */}
+                <tr className="bg-yellow-100 border-b-4 border-black text-xs font-mono select-none">
+                  {/* Name Filter */}
+                  <th className="p-2 md:p-2.5 font-normal">
+                    <input
+                      type="text"
+                      placeholder="Filter name..."
+                      value={columnFilters.name}
+                      onChange={e => {
+                        const val = e.target.value;
+                        setColumnFilter('name', val);
+                        setSearchTerm(val);
+                      }}
+                      className="w-full bg-white border-2 border-black px-2 py-1 text-xs font-mono font-bold text-black shadow-[2px_2px_0_0_#000] focus:outline-none focus:bg-yellow-50"
+                    />
+                  </th>
+
+                  {/* Party / Group Filter */}
+                  <th className="p-2 md:p-2.5 font-normal">
+                    <select
+                      value={columnFilters.groupId}
+                      onChange={e => setColumnFilter('groupId', e.target.value)}
+                      className="w-full bg-white border-2 border-black px-1.5 py-1 text-xs font-mono font-bold text-black shadow-[2px_2px_0_0_#000] focus:outline-none cursor-pointer"
+                    >
+                      <option value="all">All Groups</option>
+                      {uniqueGroups.map(grp => (
+                        <option key={grp} value={grp}>
+                          {grp === 'Individual' || grp === 'External RSVP' || grp.startsWith('Group ')
+                            ? grp
+                            : `Group ${grp}`}
+                        </option>
+                      ))}
+                    </select>
+                  </th>
+
+                  {/* Status Filter */}
+                  <th className="p-2 md:p-2.5 font-normal text-center">
+                    <select
+                      value={columnFilters.status}
+                      onChange={e => setColumnFilter('status', e.target.value)}
+                      className="w-full bg-white border-2 border-black px-1 py-1 text-xs font-mono font-bold text-black shadow-[2px_2px_0_0_#000] focus:outline-none cursor-pointer"
+                    >
+                      <option value="all">All</option>
+                      <option value="attending">Attending</option>
+                      <option value="declined">Declined All</option>
+                      <option value="no_response">No RSVP</option>
+                    </select>
+                  </th>
+
+                  {/* Wedding Filter */}
+                  <th className="p-2 md:p-2.5 font-normal text-center">
+                    <select
+                      value={columnFilters.attendingWedding}
+                      onChange={e => setColumnFilter('attendingWedding', e.target.value)}
+                      className="w-full bg-white border-2 border-black px-1 py-1 text-xs font-mono font-bold text-black shadow-[2px_2px_0_0_#000] focus:outline-none cursor-pointer"
+                    >
+                      <option value="all">All</option>
+                      <option value="attending">Yes</option>
+                      <option value="declined">No</option>
+                      <option value="no_response">Pending</option>
+                    </select>
+                  </th>
+
+                  {/* Shabbat Filter */}
+                  <th className="p-2 md:p-2.5 font-normal text-center">
+                    <select
+                      value={columnFilters.attendingShabbat}
+                      onChange={e => setColumnFilter('attendingShabbat', e.target.value)}
+                      className="w-full bg-white border-2 border-black px-1 py-1 text-xs font-mono font-bold text-black shadow-[2px_2px_0_0_#000] focus:outline-none cursor-pointer"
+                    >
+                      <option value="all">All</option>
+                      <option value="attending">Yes</option>
+                      <option value="declined">No</option>
+                      <option value="no_response">Pending</option>
+                    </select>
+                  </th>
+
+                  {/* Pool Filter */}
+                  <th className="p-2 md:p-2.5 font-normal text-center">
+                    <select
+                      value={columnFilters.attendingPool}
+                      onChange={e => setColumnFilter('attendingPool', e.target.value)}
+                      className="w-full bg-white border-2 border-black px-1 py-1 text-xs font-mono font-bold text-black shadow-[2px_2px_0_0_#000] focus:outline-none cursor-pointer"
+                    >
+                      <option value="all">All</option>
+                      <option value="attending">Yes</option>
+                      <option value="declined">No</option>
+                      <option value="no_response">Pending</option>
+                    </select>
+                  </th>
+
+                  {/* Tour Filter */}
+                  <th className="p-2 md:p-2.5 font-normal text-center">
+                    <select
+                      value={columnFilters.attendingTour}
+                      onChange={e => setColumnFilter('attendingTour', e.target.value)}
+                      className="w-full bg-white border-2 border-black px-1 py-1 text-xs font-mono font-bold text-black shadow-[2px_2px_0_0_#000] focus:outline-none cursor-pointer"
+                    >
+                      <option value="all">All</option>
+                      <option value="attending">Yes</option>
+                      <option value="declined">No</option>
+                      <option value="no_response">Pending</option>
+                    </select>
+                  </th>
+
+                  {/* Response Date Filter */}
+                  <th className="p-2 md:p-2.5 font-normal text-center">
+                    <select
+                      value={columnFilters.responseDate}
+                      onChange={e => setColumnFilter('responseDate', e.target.value)}
+                      className="w-full bg-white border-2 border-black px-1 py-1 text-xs font-mono font-bold text-black shadow-[2px_2px_0_0_#000] focus:outline-none cursor-pointer"
+                    >
+                      <option value="all">All Dates</option>
+                      <option value="responded">Responded</option>
+                      <option value="no_response">No RSVP</option>
+                      {uniqueDates.map(dateStr => (
+                        <option key={dateStr} value={dateStr}>
+                          {dateStr}
+                        </option>
+                      ))}
+                    </select>
+                  </th>
+
+                  {/* Dietary Filter Placeholder (Excluded as requested) */}
+                  <th className="p-2 md:p-2.5 font-bold text-center text-gray-400">
+                    —
+                  </th>
+
+                  {/* Notes Filter Placeholder (Excluded as requested) */}
+                  <th className="p-2 md:p-2.5 font-bold text-center text-gray-400">
+                    —
+                  </th>
+
+                  {/* Details / Reset Actions */}
+                  <th className="p-2 md:p-2.5 text-center">
+                    {hasActiveColumnFilters ? (
+                      <button
+                        onClick={resetColumnFilters}
+                        title="Reset all filters"
+                        className="bg-red-300 hover:bg-red-400 text-black border-2 border-black px-2 py-0.5 text-[10px] font-bold uppercase shadow-[1px_1px_0_0_#000] active:translate-x-[1px] active:translate-y-[1px] active:shadow-none transition-all"
+                      >
+                        Reset
+                      </button>
+                    ) : (
+                      <span className="text-gray-400 font-bold">—</span>
+                    )}
+                  </th>
+                </tr>
               </thead>
               <tbody className="divide-y-2 divide-black">
                 {loading ? (
                   <tr>
-                    <td colSpan="10" className="p-12 text-center text-gray-600 font-bold font-mono">
+                    <td colSpan="11" className="p-12 text-center text-gray-600 font-bold font-mono">
                       <RefreshCw className="w-8 h-8 animate-spin mx-auto mb-3 text-black" />
                       Loading guest list and RSVP records...
                     </td>
                   </tr>
                 ) : sortedGuests.length === 0 ? (
                   <tr>
-                    <td colSpan="10" className="p-12 text-center text-gray-500 font-mono">
+                    <td colSpan="11" className="p-12 text-center text-gray-500 font-mono">
                       No guests match your search or filter criteria.
                     </td>
                   </tr>
@@ -662,6 +1017,25 @@ const Admin = () => {
                         {/* City Tour */}
                         <td className="p-3 md:p-4 text-center whitespace-nowrap">
                           <EventBadge hasRsvp={guest.hasRsvp} isAttending={guest.attendingTour} />
+                        </td>
+
+                        {/* Response Date */}
+                        <td className="p-3 md:p-4 text-center whitespace-nowrap text-xs font-mono">
+                          {guest.responseDate ? (
+                            <div>
+                              <div className="font-bold text-black">
+                                {formatDateOnly(guest.responseDate)}
+                              </div>
+                              <div className="text-[10px] text-gray-500 font-mono">
+                                {new Date(guest.responseDate).toLocaleTimeString('en-US', {
+                                  hour: 'numeric',
+                                  minute: '2-digit'
+                                })}
+                              </div>
+                            </div>
+                          ) : (
+                            <span className="text-gray-400 font-bold">—</span>
+                          )}
                         </td>
 
                         {/* Dietary Restrictions */}
@@ -765,6 +1139,12 @@ const Admin = () => {
                   <span className="inline-block bg-red-200 border-2 border-black px-3 py-1 font-bold text-sm shadow-[2px_2px_0_0_#000]">
                     ❌ Declined All Events
                   </span>
+                )}
+                {selectedGuest.responseDate && (
+                  <div className="text-xs font-mono text-gray-700 mt-2 flex items-center gap-1.5 bg-purple-50 border border-black p-2">
+                    <Clock className="w-3.5 h-3.5 text-purple-700 shrink-0" />
+                    <span>Responded on: <strong>{formatFullDate(selectedGuest.responseDate)}</strong></span>
+                  </div>
                 )}
               </div>
 
