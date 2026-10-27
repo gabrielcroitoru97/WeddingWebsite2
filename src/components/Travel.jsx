@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Plane, Hotel, MapPin, Info } from 'lucide-react';
+import { Plane, Hotel, MapPin, Info, ExternalLink, Compass } from 'lucide-react';
 
 const Travel = () => {
   return (
@@ -24,6 +24,46 @@ const Travel = () => {
             </h2>
           </div>
           <p className="text-xl font-bold font-mono bg-white inline-block px-4 py-2 border-2 border-black shadow-[4px_4px_0_0_#000] transform -rotate-1">Everything you need to plan your trip to Cartagena</p>
+        </motion.div>
+
+        {/* Gabriel's Travel Guide Callout Banner */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="max-w-4xl mx-auto mb-14"
+        >
+          <a
+            href="https://docs.google.com/document/d/1GTlFO54x3ROX7RGrX2wv6QM6dCr9MZiJ/edit?usp=sharing&ouid=112988368785510783587&rtpof=true&sd=true"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group block bg-white border-4 border-black p-6 md:p-8 shadow-[8px_8px_0_0_#000] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[4px_4px_0_0_#000] transition-all relative"
+          >
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+              <div className="space-y-3 flex-1">
+                <div className="flex items-center gap-3">
+                  <div className="bg-cyan-400 w-10 h-10 md:w-12 md:h-12 border-2 border-black flex items-center justify-center shadow-[3px_3px_0_0_#000] shrink-0">
+                    <Compass className="w-6 h-6 md:w-7 md:h-7 text-black" />
+                  </div>
+                  <h3 className="text-2xl md:text-3xl lg:text-4xl font-black uppercase tracking-tight text-black">
+                    Gabriel's Guide to Colombia
+                  </h3>
+                </div>
+                <p className="text-base md:text-lg font-bold font-mono text-black leading-relaxed">
+                  <span className="bg-red-500 text-white font-black text-xs md:text-sm uppercase px-2 py-0.5 border-2 border-black shadow-[2px_2px_0_0_#000] mr-2 inline-block">
+                    NEW:
+                  </span>
+                  For those looking for suggestions of what to do in Cartagena or looking for travels before or after the wedding, Gabriel put together this guide to help you decide!
+                </p>
+              </div>
+              <div className="shrink-0 flex items-center">
+                <span className="inline-flex items-center gap-2 bg-yellow-300 group-hover:bg-yellow-400 text-black font-black font-mono uppercase text-sm md:text-base px-6 py-3.5 border-2 border-black shadow-[4px_4px_0_0_#000] group-hover:shadow-[2px_2px_0_0_#000] transition-all whitespace-nowrap">
+                  <span>Open Guide</span>
+                  <ExternalLink className="w-5 h-5 stroke-[2.5]" />
+                </span>
+              </div>
+            </div>
+          </a>
         </motion.div>
 
         <div className="grid md:grid-cols-2 gap-8 max-w-6xl mx-auto mb-12">
